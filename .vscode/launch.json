@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug backend",
+      "cwd": "${workspaceFolder}\\apps\\backend",
+      "runtimeArgs": ["run", "start:debug"],
+      "runtimeExecutable": "yarn",
+      "request": "launch",
+      "skipFiles": ["<node_internals>/**"],
+      "outputCapture": "std",
+      "type": "node",
+      "restart": true
+    }
+  ]
+}

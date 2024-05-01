@@ -1,0 +1,33 @@
+{
+  "name": "next-nest-template",
+  "version": "0.0.0",
+  "description": "Template repository for full-stack NestJS + NextJS projects",
+  "author": "Kir-Dev",
+  "license": "MIT",
+  "private": true,
+  "resolutions": {
+    "wrap-ansi": "7.0.0",
+    "string-width": "4.1.0"
+  },
+  "scripts": {
+    "start:backend": "cd apps/backend && yarn start:dev",
+    "start:frontend": "cd apps/frontend && yarn dev",
+    "build:backend": "cd apps/backend && yarn build",
+    "build:frontend": "cd apps/frontend && yarn build",
+    "lint": "eslint apps/* --ext .ts,.tsx --max-warnings 0",
+    "lint:fix": "eslint apps/* --ext .ts,.tsx --fix",
+    "format": "prettier --write apps",
+    "format:check": "prettier --check apps"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-next": "14.2.2",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "5.1.3",
+    "eslint-plugin-simple-import-sort": "^12.1.0",
+    "prettier": "^3.2.5"
+  },
+  "workspaces": [
+    "apps/*"
+  ]
+}
