@@ -13,7 +13,69 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum DrinkType {
+  BEER
+  WINE
+  SPIRIT
+  COCKTAIL
+}
+
 model User {
-  authSchId String @id
-  email     String @unique
+  authSchId         String           @id
+  email             String           @unique
+  firstName         String
+  lastName          String
+  profilePictureUrl String?
+  // ownedEvents       Event[]
+  // drinkActions      DrinkAction[]
+  favouriteDrinks   FavouriteDrink[]
+}
+
+model Drink {
+  id             String    @id @default(uuid())
+  name           String
+  type           DrinkType
+  alcoholContent Float
+  custom         Boolean
+  description    String?
+
+  createdAt       DateTime         @default(now())
+  drinkActions    DrinkAction[]
+  favouriteDrinks FavouriteDrink[]
+}
+
+model FavouriteDrink {
+  drinkId String
+  drink   Drink  @relation(fields: [drinkId], references: [id])
+  userId  String
+  user    User   @relation(fields: [userId], references: [authSchId])
+  order   Int
+
+  @@id([drinkId, userId])
+}
+
+model Event {
+  id          String   @id @default(uuid())
+  // ownerId     String
+  // owner       User     @relation(fields: [ownerId], references: [authSchId])
+  name        String
+  location    String
+  startDate   DateTime
+  endDate     DateTime
+  description String?
+
+  createdAt    DateTime      @default(now())
+  drinkActions DrinkAction[]
+}
+
+model DrinkAction {
+  id         String @id @default(uuid())
+  price      Int
+  milliliter Int
+  drinkId    String
+  drink      Drink  @relation(fields: [drinkId], references: [id])
+  eventId    String
+  event      Event  @relation(fields: [eventId], references: [id])
+  // userId     String
+  // user       User   @relation(fields: [userId], references: [authSchId])
 }
