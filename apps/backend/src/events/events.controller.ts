@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
-import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
@@ -17,7 +17,7 @@ export class EventsController {
     type: CreateEventDto,
     description: 'Json structure for Event object',
   })
-  @ApiOkResponse({
+  @ApiCreatedResponse({
     type: Event,
     description: 'Event created.',
   })
