@@ -1,24 +1,51 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Event } from '@prisma/client';
+import { PrismaService } from 'nestjs-prisma';
+
+import { CreateEventDto } from './dto/create-event.dto';
+import { UpdateEventDto } from './dto/update-event.dto';
 
 @Injectable()
 export class EventsService {
-  create(/*createEventDto: CreateEventDto*/) {
-    return 'This action adds a new event';
+  constructor(readonly prisma: PrismaService) {}
+
+  async create(data: CreateEventDto): Promise<Event> {
+    try {
+      return await this.prisma.event.create({ data });
+    } catch {
+      throw new BadRequestException();
+    }
   }
 
-  findAll() {
-    return `This action returns all events`;
+  async findAll(): Promise<Event[]> {
+    try {
+      return await this.prisma.event.findMany();
+    } catch (e) {
+      throw new BadRequestException();
+    }
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} event`;
+  async findOne(id: string): Promise<Event> {
+    const event = await this.prisma.event.findUnique({ where: { id } });
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+    return event;
   }
 
-  update(id: string /* updateEventDto: UpdateEventDto*/) {
-    return `This action updates a #${id} event`;
+  async update(id: string, data: UpdateEventDto): Promise<Event> {
+    try {
+      return await this.prisma.event.update({ where: { id }, data });
+    } catch {
+      throw new NotFoundException('Event not found');
+    }
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} event`;
+  async remove(id: string): Promise<Event> {
+    try {
+      return await this.prisma.event.delete({ where: { id } });
+    } catch {
+      throw new NotFoundException('Event not found');
+    }
   }
 }

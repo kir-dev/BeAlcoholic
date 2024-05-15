@@ -1,33 +1,71 @@
-import { Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
+import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { CreateEventDto } from './dto/create-event.dto';
+import { UpdateEventDto } from './dto/update-event.dto';
+import { Event } from './entities/event.entity';
 import { EventsService } from './events.service';
 
+@ApiTags('Events')
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Post()
-  async create(/*@Body() data: CreateEventDto*/) {
-    return this.eventsService.create(/*data*/);
+  @ApiOperation({ summary: 'Create an Event' })
+  @ApiBody({
+    type: CreateEventDto,
+    description: 'Json structure for Event object',
+  })
+  @ApiOkResponse({
+    type: Event,
+    description: 'Event created.',
+  })
+  async create(@Body() data: CreateEventDto): Promise<Event> {
+    return this.eventsService.create(data);
   }
 
   @Get()
-  findAll() {
+  @ApiOperation({ summary: 'List all Events' })
+  @ApiOkResponse({
+    type: [Event],
+    description: 'Events listed.',
+  })
+  async findAll(): Promise<Event[]> {
     return this.eventsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+  @ApiOperation({ summary: 'Find an Event by id' })
+  @ApiOkResponse({
+    type: Event,
+    description: 'Event found by id.',
+  })
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<Event> {
     return this.eventsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id', new ParseUUIDPipe()) id: string /*, @Body() data: UpdateEventDto*/) {
-    return this.eventsService.update(id /*,data*/);
+  @ApiOperation({ summary: 'Update an Event' })
+  @ApiBody({
+    type: CreateEventDto,
+    description: 'Json structure for partial Event object (fields to update)',
+  })
+  @ApiOkResponse({
+    type: Event,
+    description: 'Event updated.',
+  })
+  async update(@Param('id', new ParseUUIDPipe()) id: string, @Body() data: UpdateEventDto): Promise<Event> {
+    return this.eventsService.update(id, data);
   }
 
   @Delete(':id')
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
+  @ApiOperation({ summary: 'Delete an Event' })
+  @ApiOkResponse({
+    type: Event,
+    description: 'Event deleted.',
+  })
+  async remove(@Param('id', new ParseUUIDPipe()) id: string): Promise<Event> {
     return this.eventsService.remove(id);
   }
 }
