@@ -5,7 +5,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint/eslint-plugin'],
+  plugins: ['@typescript-eslint/eslint-plugin', 'import'],
   extends: ['plugin:@typescript-eslint/recommended'],
   ignorePatterns: ['.prettierrc.js'],
   rules: {
@@ -16,6 +16,5 @@ module.exports = {
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/no-extra-semi': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
-    'ordered-imports': [true, { 'grouped-imports': false }], //disable anoying empty line between import groups
   },
 };

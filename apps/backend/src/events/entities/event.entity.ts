@@ -1,4 +1,6 @@
-import { IsDate, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsDate, IsDateString, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+
+import { IsAfterDate } from '../validators/is-after-date.validator';
 
 export class Event {
   @IsUUID()
@@ -12,10 +14,11 @@ export class Event {
   @IsNotEmpty()
   location: string;
 
-  @IsDate()
+  @IsDateString()
   startDate: Date;
 
-  @IsDate()
+  @IsDateString()
+  @IsAfterDate('startDate')
   endDate: Date;
 
   @IsString()
