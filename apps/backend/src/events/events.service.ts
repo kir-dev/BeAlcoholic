@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateEventDto } from './dto/create-event.dto';
-import { UpdateEventDto } from './dto/update-event.dto';
 
 @Injectable()
 export class EventsService {
-  create(createEventDto: CreateEventDto) {
+  create(/*createEventDto: CreateEventDto*/) {
     return 'This action adds a new event';
   }
 
@@ -16,7 +14,7 @@ export class EventsService {
     return `This action returns a #${id} event`;
   }
 
-  update(id: string, updateEventDto: UpdateEventDto) {
+  update(id: string /* updateEventDto: UpdateEventDto*/) {
     return `This action updates a #${id} event`;
   }
 
