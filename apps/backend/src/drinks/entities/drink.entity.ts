@@ -6,17 +6,32 @@ export class Drink {
   @IsUUID()
   id: string;
 
+  /**
+   * Name of the drink
+   * @example Soproni meggy
+   */
   @IsString()
   @IsNotEmpty()
   name: string;
 
+  /**
+   * Type of the drink
+   * @example BEER
+   */
   @IsEnum(DrinkType)
   type: DrinkType;
 
+  /**
+   * Alcohol content of the drink
+   * @example 4.5
+   */
   @IsFloat()
   @Min(0)
   alcoholContent: number;
 
+  /**
+   * Whether it was created by a user
+   */
   @IsBoolean()
   custom: boolean;
 

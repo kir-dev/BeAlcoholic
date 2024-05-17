@@ -1,10 +1,12 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { DrinksService } from './drinks.service';
 import { CreateDrinkDto } from './dto/create-drink.dto';
 import { UpdateDrinkDto } from './dto/update-drink.dto';
 import { Drink } from './entities/drink.entity';
 
+@ApiTags('Drinks')
 @Controller('drinks')
 export class DrinksController {
   constructor(private readonly drinksService: DrinksService) {}
