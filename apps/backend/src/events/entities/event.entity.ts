@@ -1,6 +1,6 @@
 import { IsDate, IsDateString, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
-import { IsAfterDate } from '../validators/is-after-date.validator';
+import { IsAfterDate } from '../../util/is-after-date.validator';
 
 export class Event {
   @IsUUID()
