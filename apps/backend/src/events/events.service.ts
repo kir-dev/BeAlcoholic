@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Event } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
 
@@ -10,19 +10,11 @@ export class EventsService {
   constructor(readonly prisma: PrismaService) {}
 
   async create(data: CreateEventDto): Promise<Event> {
-    try {
-      return await this.prisma.event.create({ data });
-    } catch {
-      throw new BadRequestException();
-    }
+    return await this.prisma.event.create({ data });
   }
 
   async findAll(): Promise<Event[]> {
-    try {
-      return await this.prisma.event.findMany();
-    } catch (e) {
-      throw new BadRequestException();
-    }
+    return await this.prisma.event.findMany();
   }
 
   async findOne(id: string): Promise<Event> {
