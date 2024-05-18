@@ -3,12 +3,15 @@ import { IsBoolean, IsDateString, IsEnum, IsNotEmpty, IsOptional, IsString, IsUU
 import { IsFloat } from 'src/util/is-float.validator';
 
 export class Drink {
+  /**
+   * @example aaaaaaaa-bbbb-cccc-dddd-eeee-ff0123456789
+   */
   @IsUUID()
   id: string;
 
   /**
    * Name of the drink
-   * @example Soproni meggy
+   * @example 'Soproni meggy'
    */
   @IsString()
   @IsNotEmpty()
@@ -35,6 +38,9 @@ export class Drink {
   @IsBoolean()
   custom: boolean;
 
+  /**
+   * @example "A beer that doesn't really taste like beer."
+   */
   @IsString()
   @IsOptional()
   description?: string;
