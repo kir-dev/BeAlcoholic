@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
 
 import { UsersService } from './users.service';
 
@@ -29,5 +29,21 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(Number(id));
+  }
+
+  @Post(':id/favoriteDrinks/:favoriteDrinkId')
+  addFavoriteDrink(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('favoriteDrinkId', new ParseUUIDPipe()) favoriteDrinkId: string
+  ) {
+    return this.usersService.addFavoriteDrink(id, favoriteDrinkId);
+  }
+
+  @Delete(':id/favoriteDrinks/:favoriteDrinkId')
+  removeFavoriteDrink(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('favoriteDrinkId', new ParseUUIDPipe()) favoriteDrinkId: string
+  ) {
+    return this.usersService.removeFavoriteDrink(id, favoriteDrinkId);
   }
 }
