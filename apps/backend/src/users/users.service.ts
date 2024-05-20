@@ -27,13 +27,20 @@ export class UsersService {
   }
 
   async addFavoriteDrink(userId: string, favoriteDrinkId: string): Promise<User> {
-    const user = await this.prisma.user.findUnique({
-      where: { authSchId: userId },
-      include: { favouriteDrinks: true },
-    });
+    const [user, drink] = await Promise.all([
+      this.prisma.user.findUnique({
+        where: { authSchId: userId },
+        include: { favouriteDrinks: true },
+      }),
+      this.prisma.drink.findUnique({ where: { id: favoriteDrinkId } }),
+    ]);
 
     if (!user) {
       throw new NotFoundException('User not found');
+    }
+
+    if (!drink) {
+      throw new NotFoundException('Drink not found');
     }
 
     if (user.favouriteDrinks.length >= 3) {
@@ -44,36 +51,29 @@ export class UsersService {
       throw new BadRequestException('The drink is already in the user list of favorite drinks.');
     }
 
-    const updatedUser = await this.prisma.user.update({
+    return this.prisma.user.update({
       where: { authSchId: userId },
       data: { favouriteDrinks: { connect: { id: favoriteDrinkId } } },
-      include: { favouriteDrinks: true },
     });
-
-    return updatedUser;
   }
 
   async removeFavoriteDrink(userId: string, favoriteDrinkId: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: { authSchId: userId },
-      include: { favouriteDrinks: true },
+      include: { favouriteDrinks: { where: { id: favoriteDrinkId } } },
     });
 
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    const isFavorite = user.favouriteDrinks.some((drink) => drink.id === favoriteDrinkId);
-    if (!isFavorite) {
+    if (user.favouriteDrinks.length === 0) {
       throw new BadRequestException("The drink is not in the user's list of favorite drinks.");
     }
 
-    const updatedUser = await this.prisma.user.update({
+    return this.prisma.user.update({
       where: { authSchId: userId },
       data: { favouriteDrinks: { disconnect: { id: favoriteDrinkId } } },
-      include: { favouriteDrinks: true },
     });
-
-    return updatedUser;
   }
 }
