@@ -21,14 +21,14 @@ enum DrinkType {
 }
 
 model User {
-  authSchId         String           @id
-  email             String           @unique
+  authSchId         String  @id
+  email             String  @unique
   firstName         String
   lastName          String
   profilePictureUrl String?
   // ownedEvents       Event[]
   // drinkActions      DrinkAction[]
-  favouriteDrinks   FavouriteDrink[]
+  favouriteDrinks   Drink[]
 }
 
 model Drink {
@@ -39,19 +39,9 @@ model Drink {
   custom         Boolean
   description    String?
 
-  createdAt       DateTime         @default(now())
-  drinkActions    DrinkAction[]
-  favouriteDrinks FavouriteDrink[]
-}
-
-model FavouriteDrink {
-  drinkId String
-  drink   Drink  @relation(fields: [drinkId], references: [id])
-  userId  String
-  user    User   @relation(fields: [userId], references: [authSchId])
-  order   Int
-
-  @@id([drinkId, userId])
+  createdAt    DateTime      @default(now())
+  drinkActions DrinkAction[]
+  favouriteTo  User[]
 }
 
 model Event {
