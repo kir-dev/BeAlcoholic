@@ -29,5 +29,9 @@
   },
   "workspaces": [
     "apps/*"
-  ]
+  ],
+  "dependencies": {
+    "@nestjs/swagger": "^7.3.1",
+    "swagger-ui-express": "^5.0.0"
+  }
 }
