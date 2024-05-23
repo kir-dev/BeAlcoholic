@@ -1,4 +1,4 @@
-import { IsNumber, IsUUID } from 'class-validator';
+import { IsNumber, IsUUID, Min } from 'class-validator';
 
 export class DrinkAction {
   /**
@@ -23,15 +23,17 @@ export class DrinkAction {
 
   /**
    * Price of the drink
-   * @example '450'
+   * @example 450
    */
   @IsNumber()
+  @Min(0)
   price: number;
 
   /**
    * Quantity of the drink in milliliter
-   * @example '500'
+   * @example 500
    */
   @IsNumber()
+  @Min(0)
   milliliter: number;
 }
