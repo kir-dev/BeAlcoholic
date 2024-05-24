@@ -14,8 +14,8 @@
     "start:frontend": "cd apps/frontend && yarn dev",
     "build:backend": "cd apps/backend && yarn build",
     "build:frontend": "cd apps/frontend && yarn build",
-    "lint": "eslint apps/* --ext .ts,.tsx --max-warnings 0",
-    "lint:fix": "eslint apps/* --ext .ts,.tsx --fix",
+    "lint": "eslint apps --ext .ts,.tsx --max-warnings 0",
+    "lint:fix": "eslint apps --ext .ts,.tsx --fix",
     "format": "prettier --write apps",
     "format:check": "prettier --check apps"
   },
