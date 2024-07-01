@@ -3,6 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { DrinkActionsService } from './drink-action.service';
 import { CreateDrinkActionDto } from './dto/create-drink-action.dto';
+import { DrinkActionDto } from './dto/drink-action.dto';
 import { UpdateDrinkActionDto } from './dto/update-drink-action.dto';
 import { DrinkAction } from './entities/drink-action.entity';
 
@@ -17,12 +18,12 @@ export class DrinkActionsController {
   }
 
   @Get()
-  async findAll(): Promise<DrinkAction[]> {
+  async findAll(): Promise<DrinkActionDto[]> {
     return this.drinkActionsService.findAll();
   }
 
   @Get(':id')
-  async findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<DrinkAction> {
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<DrinkActionDto> {
     return this.drinkActionsService.findOne(id);
   }
 
