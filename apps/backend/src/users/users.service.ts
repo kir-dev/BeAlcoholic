@@ -6,24 +6,24 @@ import { PrismaService } from 'nestjs-prisma';
 export class UsersService {
   constructor(readonly prisma: PrismaService) {}
 
-  create(/*createUserDto: CreateUserDto*/) {
-    return 'This action adds a new user';
+  async findOne(authSchId: string): Promise<User | null> {
+    const user = await this.prisma.user.findUnique({ where: { authSchId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll(): Promise<User[]> {
+    return await this.prisma.user.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update(id: number /* updateUserDto: UpdateUserDto*/) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string): Promise<User> {
+    try {
+      return await this.prisma.user.delete({ where: { authSchId: id } });
+    } catch (error) {
+      throw new NotFoundException('User not found');
+    }
   }
 
   async addFavoriteDrink(userId: string, favoriteDrinkId: string): Promise<User> {

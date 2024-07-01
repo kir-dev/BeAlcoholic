@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from 'nestjs-prisma';
 
 import { AppController } from './app.controller';
@@ -8,7 +9,13 @@ import { EventsModule } from './events/events.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
-  imports: [PrismaModule.forRoot({ isGlobal: true }), UsersModule, EventsModule, DrinksModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    PrismaModule.forRoot({ isGlobal: true }),
+    UsersModule,
+    EventsModule,
+    DrinksModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
