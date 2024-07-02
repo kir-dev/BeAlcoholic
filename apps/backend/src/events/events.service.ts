@@ -13,8 +13,14 @@ export class EventsService {
     return await this.prisma.event.create({ data });
   }
 
-  async findAll(): Promise<Event[]> {
-    return await this.prisma.event.findMany();
+  async findAll(skip = 0, take = 10): Promise<Event[]> {
+    return await this.prisma.event.findMany({
+      orderBy: {
+        endDate: 'desc',
+      },
+      skip,
+      take,
+    });
   }
 
   async findOne(id: string): Promise<Event> {
