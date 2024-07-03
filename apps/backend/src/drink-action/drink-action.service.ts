@@ -20,11 +20,10 @@ export class DrinkActionsService {
           drink: { connect: { id: drinkId } },
           event: { connect: { id: eventId } },
         },
-        include: { drink: true, event: true },
       });
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2003') {
+        if (error.code === 'P2025') {
           throw new BadRequestException('drinkId or eventId does not exist');
         }
       }
