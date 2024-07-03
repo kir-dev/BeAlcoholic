@@ -2,11 +2,13 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { User } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
 
+import { UserWithFavoriteDrinks } from './entities/UserWithFavoriteDrinks';
+
 @Injectable()
 export class UsersService {
   constructor(readonly prisma: PrismaService) {}
 
-  async findOne(authSchId: string): Promise<User | null> {
+  async findOne(authSchId: string): Promise<UserWithFavoriteDrinks> {
     const user = await this.prisma.user.findUnique({ where: { authSchId }, include: { favouriteDrinks: true } });
     if (!user) {
       throw new NotFoundException('User not found');
