@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Param, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Delete, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
@@ -25,5 +25,21 @@ export class UsersController {
   @ApiOperation({ summary: 'Delete user by ID' })
   async remove(@Param('id', ParseUUIDPipe) id: string): Promise<User> {
     return await this.usersService.remove(id);
+  }
+
+  @Post(':id/favoriteDrinks/:favoriteDrinkId')
+  addFavoriteDrink(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('favoriteDrinkId', new ParseUUIDPipe()) favoriteDrinkId: string
+  ) {
+    return this.usersService.addFavoriteDrink(id, favoriteDrinkId);
+  }
+
+  @Delete(':id/favoriteDrinks/:favoriteDrinkId')
+  removeFavoriteDrink(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('favoriteDrinkId', new ParseUUIDPipe()) favoriteDrinkId: string
+  ) {
+    return this.usersService.removeFavoriteDrink(id, favoriteDrinkId);
   }
 }
