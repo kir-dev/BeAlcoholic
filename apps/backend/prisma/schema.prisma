@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["omitApi"]
 }
 
 datasource db {
@@ -20,11 +21,18 @@ enum DrinkType {
   COCKTAIL
 }
 
+enum Gender {
+  Male
+  Female
+}
+
 model User {
   authSchId         String  @id
   email             String  @unique
   firstName         String
   lastName          String
+  gender            Gender?
+  weight            Float?
   profilePictureUrl String?
   // ownedEvents       Event[]
   // drinkActions      DrinkAction[]
