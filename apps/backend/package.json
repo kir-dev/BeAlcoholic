@@ -17,6 +17,7 @@
     "test:cov": "jest --coverage"
   },
   "dependencies": {
+    "@kir-dev/passport-authsch": "^0.2.1",
     "@nestjs/cli": "^10.3.2",
     "@nestjs/common": "^10.3.8",
     "@nestjs/config": "^3.2.2",

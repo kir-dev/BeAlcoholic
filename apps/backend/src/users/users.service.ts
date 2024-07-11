@@ -1,24 +1,26 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { Gender, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
 
-import { UserWithFavoriteDrinks } from './entities/UserWithFavoriteDrinks';
+import { UserGenderWeight } from './entities/UserGenderWeight';
+import { UserWithoutWeight } from './entities/UserWithoutWeight';
 
 @Injectable()
 export class UsersService {
   constructor(readonly prisma: PrismaService) {}
 
-  async update(authSchId: string, gender?: Gender, weight?: number) {
-    return await this.prisma.user.updateMany({
-      where: { authSchId },
-      data: {
-        gender: gender,
-        weight: weight,
-      },
-    });
+  async update(authSchId: string, data: UserGenderWeight) {
+    try {
+      return await this.prisma.user.update({
+        where: { authSchId },
+        data: { gender: data.gender, weight: data.weight },
+      });
+    } catch {
+      throw new NotFoundException('User not found');
+    }
   }
 
-  async findOne(authSchId: string): Promise<UserWithFavoriteDrinks> {
+  async findOne(authSchId: string): Promise<UserWithoutWeight> {
     const user = await this.prisma.user.findUnique({
       where: { authSchId },
       include: { favouriteDrinks: true },
@@ -30,7 +32,7 @@ export class UsersService {
     return user;
   }
 
-  async findAll() {
+  async findAll(): Promise<UserWithoutWeight[]> {
     return await this.prisma.user.findMany({ omit: { weight: true } });
   }
 

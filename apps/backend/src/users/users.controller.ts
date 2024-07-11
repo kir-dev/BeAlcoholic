@@ -1,9 +1,9 @@
-import { BadRequestException, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { Gender, User } from '@prisma/client';
-import { isNumber } from 'class-validator';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { User } from '@prisma/client';
 
-import { UserWithFavoriteDrinks } from './entities/UserWithFavoriteDrinks';
+import { UserGenderWeight } from './entities/UserGenderWeight';
+import { UserWithoutWeight } from './entities/UserWithoutWeight';
 import { UsersService } from './users.service';
 @ApiTags('Users')
 @Controller('users')
@@ -12,13 +12,13 @@ export class UsersController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get user details by ID' })
-  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<UserWithFavoriteDrinks> {
+  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<UserWithoutWeight> {
     return await this.usersService.findOne(id);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all users' })
-  async findAll() {
+  async findAll(): Promise<UserWithoutWeight[]> {
     return await this.usersService.findAll();
   }
 
@@ -30,27 +30,10 @@ export class UsersController {
 
   @Patch(':id/')
   @ApiOperation({ summary: 'Edit Gender and Weight' })
-  @ApiQuery({ name: 'gender', required: false, type: String, enum: [Gender.Male, Gender.Female] })
-  @ApiQuery({ name: 'weight', required: false, type: String })
-  async update(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Query('gender') gender?: Gender,
-    @Query('weight') weightString?: string //
-  ) {
-    const weight = parseFloat(weightString);
-
-    if (!weightString === null && !isNumber(weight)) {
-      throw new BadRequestException('Invalid weight value');
-    }
-
-    if (!weightString) {
-      const updatedUsersCount = await this.usersService.update(id, gender);
-      return { message: `${updatedUsersCount.count} User was updated successfully` };
-    }
-
-    const updatedUsersCount = await this.usersService.update(id, gender, weight);
-
-    return { message: `${updatedUsersCount.count} User was updated successfully` };
+  @ApiBody({ type: UserGenderWeight })
+  async update(@Param('id', ParseUUIDPipe) id: string, @Body() userGenderWeight: UserGenderWeight) {
+    await this.usersService.update(id, userGenderWeight);
+    return { message: `User was updated successfully: ${userGenderWeight.gender}, ${userGenderWeight.weight} kg` };
   }
 
   @Post(':id/favoriteDrinks/:favoriteDrinkId')
