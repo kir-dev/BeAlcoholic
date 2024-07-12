@@ -704,10 +704,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@kir-dev/passport-authsch@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@kir-dev/passport-authsch/-/passport-authsch-0.2.1.tgz#2eee01db8dde5ccaadf457a479aaa307e94f2575"
-  integrity sha512-JDmKfaSmPg+413kR3eQHlu65I5zMXpM5mzK6YUZo+I1PKgfIjg/UzFZmFibRVUZUEi3k+YWye8Ll4DA9mMaj9w==
+"@kir-dev/passport-authsch@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@kir-dev/passport-authsch/-/passport-authsch-1.0.0.tgz#39f3117cbe61e29ffc1139d01ec7e8290a8ee6aa"
+  integrity sha512-oMyocn/KmSZ6knpa/ek0oEUXSI8miHl3yPq6LOu/s4iebYQeVBpHMQe2iCpLA9QD1GeXIW9fQKSlgitnblEJaQ==
   dependencies:
     axios "^1.7.2"
     passport-strategy "^1.0.0"
