@@ -2,8 +2,9 @@ import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
-import { UserGenderWeight } from './entities/UserGenderWeight';
-import { UserWithoutWeight } from './entities/UserWithoutWeight';
+import { UserGenderWeight } from './dto/user-gender-weight.dto';
+import { UserWithFavoriteDrinks } from './dto/user-with-favorite-drinks.dto';
+import { UserWithoutWeight } from './dto/user-without-weight.dto';
 import { UsersService } from './users.service';
 @ApiTags('Users')
 @Controller('users')
@@ -12,7 +13,7 @@ export class UsersController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get user details by ID' })
-  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<UserWithoutWeight> {
+  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<UserWithFavoriteDrinks> {
     return await this.usersService.findOne(id);
   }
 

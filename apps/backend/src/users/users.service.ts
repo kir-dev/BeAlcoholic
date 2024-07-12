@@ -2,8 +2,9 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { User } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
 
-import { UserGenderWeight } from './entities/UserGenderWeight';
-import { UserWithoutWeight } from './entities/UserWithoutWeight';
+import { UserGenderWeight } from './dto/user-gender-weight.dto';
+import { UserWithFavoriteDrinks } from './dto/user-with-favorite-drinks.dto';
+import { UserWithoutWeight } from './dto/user-without-weight.dto';
 
 @Injectable()
 export class UsersService {
@@ -20,7 +21,7 @@ export class UsersService {
     }
   }
 
-  async findOne(authSchId: string): Promise<UserWithoutWeight> {
+  async findOne(authSchId: string): Promise<UserWithFavoriteDrinks> {
     const user = await this.prisma.user.findUnique({
       where: { authSchId },
       include: { favouriteDrinks: true },
