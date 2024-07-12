@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "Debug backend",
-      "cwd": "${workspaceFolder}\\apps\\backend",
+      "cwd": "${workspaceFolder}/apps/backend",
       "runtimeArgs": ["run", "start:debug"],
       "runtimeExecutable": "yarn",
       "request": "launch",
