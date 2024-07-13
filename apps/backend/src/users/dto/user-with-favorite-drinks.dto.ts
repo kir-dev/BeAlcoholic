@@ -1,6 +1,6 @@
 import { Drink } from 'src/drinks/entities/drink.entity';
 
-import { User } from './user.entity';
+import { User } from '../entities/user.entity';
 
 export class UserWithFavoriteDrinks extends User {
   /**
