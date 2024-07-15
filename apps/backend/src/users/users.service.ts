@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { User } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
 
+import { UserBac } from './dto/user-bac.dto';
 import { UserGenderWeight } from './dto/user-gender-weight.dto';
 import { UserWithFavoriteDrinks } from './dto/user-with-favorite-drinks.dto';
 import { UserWithoutWeight } from './dto/user-without-weight.dto';
@@ -35,6 +36,39 @@ export class UsersService {
 
   async findAll(): Promise<UserWithoutWeight[]> {
     return await this.prisma.user.findMany({ omit: { weight: true } });
+  }
+
+  private calculateHoursSinceDrink(drinkTime: Date, currentTime: Date): number {
+    const timeDifference = currentTime.getTime() - drinkTime.getTime();
+    return timeDifference / (1000 * 60 * 60);
+  }
+
+  async calBac(authSchId: string): Promise<UserBac> {
+    const drinkActions = await this.prisma.drinkAction.findMany({
+      // where: { authSchId },
+      include: { drink: { select: { alcoholContent: true } } },
+    });
+
+    const currentTime = new Date();
+
+    const user = await this.prisma.user.findUnique({ where: { authSchId }, select: { weight: true, gender: true } });
+
+    let totalDose = 0;
+    let totalEliminatedAlcohol = 0;
+
+    for (const drinkAction of drinkActions) {
+      const dose = drinkAction.milliliter * drinkAction.drink.alcoholContent * 0.789;
+      const hoursSinceDrink = this.calculateHoursSinceDrink(drinkAction.createdAt, currentTime);
+      const eliminatedAlcohol = hoursSinceDrink * 0.016;
+      totalDose += dose;
+      totalEliminatedAlcohol += eliminatedAlcohol;
+    }
+
+    const userWeightInGrams = user.weight * 1000;
+    const genderFactor = user.gender === 'Male' ? 0.68 : 0.55;
+    const bac = (totalDose / (userWeightInGrams * genderFactor)) * 100;
+
+    return { alcoholContent: Math.max(0, bac - totalEliminatedAlcohol) };
   }
 
   async remove(authSchId: string): Promise<User> {
