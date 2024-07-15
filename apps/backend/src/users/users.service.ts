@@ -38,37 +38,51 @@ export class UsersService {
     return await this.prisma.user.findMany({ omit: { weight: true } });
   }
 
-  private calculateHoursSinceDrink(drinkTime: Date, currentTime: Date): number {
-    const timeDifference = currentTime.getTime() - drinkTime.getTime();
-    return timeDifference / (1000 * 60 * 60);
-  }
-
   async calBac(authSchId: string): Promise<UserBac> {
+    const user = await this.prisma.user.findUnique({
+      where: { authSchId },
+      select: { weight: true, gender: true },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const currentTime = new Date();
+    const userWeightInGrams = user.weight * 1000;
+    const genderFactor = user.gender === 'Male' ? 0.68 : 0.55;
+
     const drinkActions = await this.prisma.drinkAction.findMany({
       // where: { authSchId },
       include: { drink: { select: { alcoholContent: true } } },
     });
 
-    const currentTime = new Date();
-
-    const user = await this.prisma.user.findUnique({ where: { authSchId }, select: { weight: true, gender: true } });
-
     let totalDose = 0;
-    let totalEliminatedAlcohol = 0;
+    const totalEliminatedAlcohol = this.calculateHoursSinceFirstDrink(drinkActions, currentTime) * 0.016;
 
     for (const drinkAction of drinkActions) {
-      const dose = drinkAction.milliliter * drinkAction.drink.alcoholContent * 0.789;
-      const hoursSinceDrink = this.calculateHoursSinceDrink(drinkAction.createdAt, currentTime);
-      const eliminatedAlcohol = hoursSinceDrink * 0.016;
+      const dose = drinkAction.milliliter * (drinkAction.drink.alcoholContent / 100) * 0.789;
       totalDose += dose;
-      totalEliminatedAlcohol += eliminatedAlcohol;
     }
 
-    const userWeightInGrams = user.weight * 1000;
-    const genderFactor = user.gender === 'Male' ? 0.68 : 0.55;
+    totalDose = Math.max(0, totalDose);
     const bac = (totalDose / (userWeightInGrams * genderFactor)) * 100;
 
     return { alcoholContent: Math.max(0, bac - totalEliminatedAlcohol) };
+  }
+
+  private calculateHoursSinceFirstDrink(drinkActions: any[], currentTime: Date): number {
+    if (drinkActions.length === 0) {
+      return 0;
+    }
+
+    drinkActions.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+
+    const firstDrinkTime = drinkActions[0].createdAt;
+    const timeDifferenceMs = currentTime.getTime() - firstDrinkTime.getTime();
+    const hoursDifference = timeDifferenceMs / (1000 * 60 * 60);
+
+    return hoursDifference;
   }
 
   async remove(authSchId: string): Promise<User> {
