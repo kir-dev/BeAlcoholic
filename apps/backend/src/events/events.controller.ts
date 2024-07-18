@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { CreateEventDto } from './dto/create-event.dto';
@@ -17,8 +17,10 @@ export class EventsController {
   }
 
   @Get()
-  async findAll(): Promise<Event[]> {
-    return this.eventsService.findAll();
+  async findAll(@Query('skip') skip?: string, @Query('take') take?: string): Promise<Event[]> {
+    const skipVal = skip ? parseInt(skip, 10) : 0;
+    const takeVal = take ? parseInt(take, 10) : 10;
+    return this.eventsService.findAll(skipVal, takeVal);
   }
 
   @Get(':id')
