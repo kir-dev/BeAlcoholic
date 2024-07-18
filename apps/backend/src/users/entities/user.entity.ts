@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
-
+import { Gender } from '@prisma/client';
+import { IsNotEmpty, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 export class User {
   @IsUUID()
   authSchId: string;
@@ -27,6 +27,21 @@ export class User {
   @IsString()
   @IsNotEmpty()
   lastName: string;
+
+  /**
+   * Gender
+   * @example Male/Female
+   */
+  @IsOptional()
+  gender?: Gender;
+
+  /**
+   * Weight
+   * @example 75.2 (kg)
+   */
+  @IsOptional()
+  @Min(0)
+  weight?: number;
 
   @IsOptional()
   profilePictureUrl?: string;

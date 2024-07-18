@@ -1,8 +1,10 @@
-import { Controller, Delete, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
-import { UserWithFavoriteDrinks } from './entities/UserWithFavoriteDrinks';
+import { UserGenderWeight } from './dto/user-gender-weight.dto';
+import { UserWithFavoriteDrinks } from './dto/user-with-favorite-drinks.dto';
+import { UserWithoutWeight } from './dto/user-without-weight.dto';
 import { UsersService } from './users.service';
 @ApiTags('Users')
 @Controller('users')
@@ -17,7 +19,7 @@ export class UsersController {
 
   @Get()
   @ApiOperation({ summary: 'Get all users' })
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<UserWithoutWeight[]> {
     return await this.usersService.findAll();
   }
 
@@ -25,6 +27,14 @@ export class UsersController {
   @ApiOperation({ summary: 'Delete user by ID' })
   async remove(@Param('id', ParseUUIDPipe) id: string): Promise<User> {
     return await this.usersService.remove(id);
+  }
+
+  @Patch(':id/')
+  @ApiOperation({ summary: 'Edit Gender and Weight' })
+  @ApiBody({ type: UserGenderWeight })
+  async update(@Param('id', ParseUUIDPipe) id: string, @Body() userGenderWeight: UserGenderWeight) {
+    await this.usersService.update(id, userGenderWeight);
+    return { message: `User was updated successfully: ${userGenderWeight.gender}, ${userGenderWeight.weight} kg` };
   }
 
   @Post(':id/favoriteDrinks/:favoriteDrinkId')
