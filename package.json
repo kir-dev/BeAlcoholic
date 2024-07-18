@@ -5,10 +5,6 @@
   "author": "Kir-Dev",
   "license": "MIT",
   "private": true,
-  "resolutions": {
-    "wrap-ansi": "7.0.0",
-    "string-width": "4.1.0"
-  },
   "scripts": {
     "start:backend": "cd apps/backend && yarn start:dev",
     "start:frontend": "cd apps/frontend && yarn dev",
