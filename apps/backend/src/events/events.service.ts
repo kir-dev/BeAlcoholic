@@ -1,5 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Event } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaService } from 'nestjs-prisma';
 import { User } from 'src/users/entities/user.entity';
 
@@ -11,12 +12,28 @@ export class EventsService {
   constructor(readonly prisma: PrismaService) {}
 
   async create(data: CreateEventDto, userId: string): Promise<Event> {
-    return await this.prisma.event.create({
-      data: {
-        ...data,
-        ownerId: userId,
-      },
-    });
+    const { drinkActions, ...eventData } = data;
+    try {
+      return await this.prisma.event.create({
+        data: {
+          ...eventData,
+          ownerId: userId,
+          drinkActions: {
+            create:
+              drinkActions?.map((action) => ({
+                ...action,
+                drink: { connect: { id: action.drinkId } },
+              })) || [],
+          },
+        },
+        include: { drinkActions: true },
+      });
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        throw new BadRequestException('drinkId or eventId does not exist');
+      }
+      throw error;
+    }
   }
 
   async findAll(): Promise<Event[]> {
@@ -36,7 +53,7 @@ export class EventsService {
     if (!event || (event.ownerId !== user.authSchId && !user.isAdmin)) {
       throw new NotFoundException("Event not found or you don't have permission to update it");
     }
-    return await this.prisma.event.update({ where: { id }, data });
+    return await this.prisma.event.update({ where: { id }, data: {} });
   }
 
   async remove(id: string, user: User): Promise<Event> {
