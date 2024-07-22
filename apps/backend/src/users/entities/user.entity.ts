@@ -1,5 +1,6 @@
 import { Gender } from '@prisma/client';
-import { IsNotEmpty, IsOptional, IsString, IsUUID, Min } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString, IsUUID, Min } from 'class-validator';
+
 export class User {
   @IsUUID()
   authSchId: string;
@@ -42,6 +43,12 @@ export class User {
   @IsOptional()
   @Min(0)
   weight?: number;
+
+  /**
+   * Is the user an administrator?
+   */
+  @IsBoolean()
+  isAdmin: boolean;
 
   @IsOptional()
   profilePictureUrl?: string;
