@@ -57,32 +57,19 @@ export class UsersService {
       include: { drink: { select: { alcoholContent: true } } },
     });
 
-    let totalDose = 0;
-    const totalEliminatedAlcohol = this.calculateHoursSinceFirstDrink(drinkActions, currentTime) * 0.016;
+    let totalBac = 0;
 
     for (const drinkAction of drinkActions) {
       const dose = drinkAction.milliliter * (drinkAction.drink.alcoholContent / 100) * 0.789;
-      totalDose += dose;
+
+      const timeDifferenceMs = currentTime.getTime() - drinkAction.createdAt.getTime();
+      const eliminated = (timeDifferenceMs / (1000 * 60 * 60)) * 0.016;
+
+      const bac = (dose / (userWeightInGrams * genderFactor)) * 100;
+      totalBac += Math.max(0, bac - eliminated);
     }
 
-    totalDose = Math.max(0, totalDose);
-    const bac = (totalDose / (userWeightInGrams * genderFactor)) * 100;
-
-    return { alcoholContent: Math.max(0, bac - totalEliminatedAlcohol) };
-  }
-
-  private calculateHoursSinceFirstDrink(drinkActions: any[], currentTime: Date): number {
-    if (drinkActions.length === 0) {
-      return 0;
-    }
-
-    drinkActions.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
-
-    const firstDrinkTime = drinkActions[0].createdAt;
-    const timeDifferenceMs = currentTime.getTime() - firstDrinkTime.getTime();
-    const hoursDifference = timeDifferenceMs / (1000 * 60 * 60);
-
-    return hoursDifference;
+    return { alcoholContent: Math.max(0, totalBac) };
   }
 
   async remove(authSchId: string): Promise<User> {
