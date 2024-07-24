@@ -1,5 +1,17 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  DefaultValuePipe,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
@@ -17,10 +29,13 @@ export class EventsController {
   }
 
   @Get()
-  async findAll(@Query('skip') skip?: string, @Query('take') take?: string): Promise<Event[]> {
-    const skipVal = skip ? parseInt(skip, 10) : 0;
-    const takeVal = take ? parseInt(take, 10) : 10;
-    return this.eventsService.findAll(skipVal, takeVal);
+  @ApiQuery({ name: 'skip', type: Number })
+  @ApiQuery({ name: 'take', type: Number })
+  async findAll(
+    @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip?: number,
+    @Query('take', new DefaultValuePipe(10), ParseIntPipe) take?: number
+  ): Promise<Event[]> {
+    return this.eventsService.findAll(take, skip);
   }
 
   @Get(':id')
