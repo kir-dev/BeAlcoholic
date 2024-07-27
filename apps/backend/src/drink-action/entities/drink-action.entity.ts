@@ -36,4 +36,16 @@ export class DrinkAction {
   @IsNumber()
   @Min(0)
   milliliter: number;
+
+  /**
+   * Shows if the alcohol still has effect on the user.
+   * @example false
+   */
+  hasEffect: boolean;
+
+  /**
+   * The date and time when the alcohol was consumed
+   * @example 2024-07-27T15:31:11.763Z
+   */
+  createdAt: Date;
 }

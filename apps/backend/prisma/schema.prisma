@@ -76,5 +76,6 @@ model DrinkAction {
   event      Event    @relation(fields: [eventId], references: [id])
   // userId     String
   // user       User   @relation(fields: [userId], references: [authSchId])
+  hasEffect  Boolean  @default(true)
   createdAt  DateTime @default(now())
 }

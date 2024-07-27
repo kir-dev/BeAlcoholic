@@ -1,5 +1,7 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from '@kir-dev/passport-authsch';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
 import { UserBac } from './dto/user-bac.dto';
@@ -25,9 +27,14 @@ export class UsersController {
   }
 
   @Get(':id/bac')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get BAC (Blood Alcohol Content)' })
-  async calBac(@Param('id', ParseUUIDPipe) id: string): Promise<UserBac> {
-    return await this.usersService.calBac(id);
+  async calculateBloodAlcoholContent(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: User
+  ): Promise<UserBac> {
+    return await this.usersService.calculateBloodAlcoholContent(id, user);
   }
 
   @Delete(':id')
