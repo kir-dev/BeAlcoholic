@@ -23,6 +23,12 @@ export class Event {
   location: string;
 
   /**
+   * Owner's ID.
+   */
+  @IsUUID()
+  ownerId: string;
+
+  /**
    * Date and time when the event starts.
    * @example '2022-01-01T22:30:00.000Z'
    */
