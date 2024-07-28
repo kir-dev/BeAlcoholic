@@ -11,7 +11,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://postgres:postgres@localhost:5432/bealcoholic?schema=public"
 }
 
 enum DrinkType {
@@ -28,7 +28,7 @@ enum Gender {
 
 model User {
   authSchId         String  @id
-  email             String  @unique
+  email             String? @unique
   firstName         String
   lastName          String
   gender            Gender?
