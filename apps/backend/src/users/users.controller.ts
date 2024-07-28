@@ -31,10 +31,10 @@ export class UsersController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get BAC (Blood Alcohol Content)' })
   async calculateBloodAlcoholContent(
-    @Param('id', ParseUUIDPipe) id: string,
+    // @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() user: User
   ): Promise<UserBac> {
-    return await this.usersService.calculateBloodAlcoholContent(id, user);
+    return await this.usersService.calculateBloodAlcoholContent(user);
   }
 
   @Delete(':id')

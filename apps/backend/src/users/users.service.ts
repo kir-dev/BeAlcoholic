@@ -38,8 +38,12 @@ export class UsersService {
     return await this.prisma.user.findMany({ omit: { weight: true } });
   }
 
-  async calculateBloodAlcoholContent(authSchId: string, user: User): Promise<UserBac> {
-    if (!user.weight || !user.gender) {
+  async calculateBloodAlcoholContent(user: User): Promise<UserBac> {
+    if (!user.weight) {
+      throw new NotFoundException('User has no weight or gender set');
+    }
+
+    if (!user.gender) {
       throw new NotFoundException('User has no weight or gender set');
     }
 
@@ -48,7 +52,7 @@ export class UsersService {
     const genderFactor = user.gender === 'Male' ? 0.68 : 0.55;
 
     const drinkActions = await this.prisma.drinkAction.findMany({
-      // where: { authSchId },
+      // where: { user.authSchId },
       include: { drink: { select: { alcoholContent: true } } },
     });
 
@@ -57,23 +61,22 @@ export class UsersService {
     for (const drinkAction of drinkActions) {
       if (drinkAction.hasEffect) {
         const dose = drinkAction.milliliter * (drinkAction.drink.alcoholContent / 100) * 0.789;
-
         const timeDifferenceMs = currentTime.getTime() - drinkAction.createdAt.getTime();
         const eliminated = (timeDifferenceMs / (1000 * 60 * 60)) * 0.016;
 
-        const bac = Math.max(
-          0,
-          Math.round(((dose / (userWeightInGrams * genderFactor)) * 100 - eliminated) * 10000) / 10000
-        );
+        const bac = Math.max(0, (dose / (userWeightInGrams * genderFactor)) * 100 - eliminated);
         if (bac === 0) {
-          drinkAction.hasEffect = false;
+          await this.prisma.drinkAction.update({
+            where: { id: drinkAction.id },
+            data: { hasEffect: false },
+          });
         } else {
           totalBac += bac;
         }
       }
     }
 
-    return { alcoholContent: Math.max(0, totalBac) };
+    return { alcoholContent: Math.round(totalBac * 10000) / 10000 };
   }
 
   async remove(authSchId: string): Promise<User> {
