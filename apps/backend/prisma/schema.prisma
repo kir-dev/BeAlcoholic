@@ -28,7 +28,7 @@ enum Gender {
 
 model User {
   authSchId         String  @id
-  email             String  @unique
+  email             String? @unique
   firstName         String
   lastName          String
   gender            Gender?
