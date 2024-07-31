@@ -10,8 +10,8 @@ export class User {
    * @example 'john.smith@example.com'
    */
   @IsString()
-  @IsNotEmpty()
-  email: string;
+  @IsOptional()
+  email?: string;
 
   /**
    * First Name.
