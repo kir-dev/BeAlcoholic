@@ -26,14 +26,11 @@ export class UsersController {
     return await this.usersService.findAll();
   }
 
-  @Get(':id/bac')
+  @Get('/bac')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get BAC (Blood Alcohol Content)' })
-  async calculateBloodAlcoholContent(
-    // @Param('id', ParseUUIDPipe) id: string,
-    @CurrentUser() user: User
-  ): Promise<UserBac> {
+  async calculateBloodAlcoholContent(@CurrentUser() user: User): Promise<UserBac> {
     return await this.usersService.calculateBloodAlcoholContent(user);
   }
 

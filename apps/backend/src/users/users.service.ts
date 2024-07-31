@@ -52,27 +52,25 @@ export class UsersService {
     const genderFactor = user.gender === 'Male' ? 0.68 : 0.55;
 
     const drinkActions = await this.prisma.drinkAction.findMany({
-      // where: { user.authSchId },
+      where: { hasEffect: true },
       include: { drink: { select: { alcoholContent: true } } },
     });
 
     let totalBac = 0;
 
     for (const drinkAction of drinkActions) {
-      if (drinkAction.hasEffect) {
-        const dose = drinkAction.milliliter * (drinkAction.drink.alcoholContent / 100) * 0.789;
-        const timeDifferenceMs = currentTime.getTime() - drinkAction.createdAt.getTime();
-        const eliminated = (timeDifferenceMs / (1000 * 60 * 60)) * 0.016;
+      const dose = drinkAction.milliliter * (drinkAction.drink.alcoholContent / 100) * 0.789;
+      const timeDifferenceMs = currentTime.getTime() - drinkAction.createdAt.getTime();
+      const eliminated = (timeDifferenceMs / (1000 * 60 * 60)) * 0.016;
 
-        const bac = Math.max(0, (dose / (userWeightInGrams * genderFactor)) * 100 - eliminated);
-        if (bac === 0) {
-          await this.prisma.drinkAction.update({
-            where: { id: drinkAction.id },
-            data: { hasEffect: false },
-          });
-        } else {
-          totalBac += bac;
-        }
+      const bac = Math.max(0, (dose / (userWeightInGrams * genderFactor)) * 100 - eliminated);
+      if (bac === 0) {
+        await this.prisma.drinkAction.update({
+          where: { id: drinkAction.id },
+          data: { hasEffect: false },
+        });
+      } else {
+        totalBac += bac;
       }
     }
 
