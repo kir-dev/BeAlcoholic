@@ -29,8 +29,8 @@ export class EventsController {
   }
 
   @Get()
-  @ApiQuery({ name: 'skip', type: Number })
-  @ApiQuery({ name: 'take', type: Number })
+  @ApiQuery({ name: 'skip', required: false, type: Number })
+  @ApiQuery({ name: 'take', required: false, type: Number })
   async findAll(
     @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip?: number,
     @Query('take', new DefaultValuePipe(10), ParseIntPipe) take?: number
