@@ -31,14 +31,14 @@ export class User {
 
   /**
    * Gender
-   * @example Male/Female
+   * @example Male
    */
   @IsOptional()
   gender?: Gender;
 
   /**
    * Weight
-   * @example 75.2 (kg)
+   * @example 75.2
    */
   @IsOptional()
   @Min(0)

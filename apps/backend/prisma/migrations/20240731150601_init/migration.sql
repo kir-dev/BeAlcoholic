@@ -52,6 +52,8 @@ CREATE TABLE "DrinkAction" (
     "milliliter" INTEGER NOT NULL,
     "drinkId" TEXT NOT NULL,
     "eventId" TEXT NOT NULL,
+    "hasEffect" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "DrinkAction_pkey" PRIMARY KEY ("id")
 );

@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { User } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
 
+import { UserBac } from './dto/user-bac.dto';
 import { UserGenderWeight } from './dto/user-gender-weight.dto';
 import { UserWithFavoriteDrinks } from './dto/user-with-favorite-drinks.dto';
 import { UserWithoutWeight } from './dto/user-without-weight.dto';
@@ -35,6 +36,45 @@ export class UsersService {
 
   async findAll(): Promise<UserWithoutWeight[]> {
     return await this.prisma.user.findMany({ omit: { weight: true } });
+  }
+
+  async calculateBloodAlcoholContent(user: User): Promise<UserBac> {
+    if (!user.weight) {
+      throw new NotFoundException('User has no weight or gender set');
+    }
+
+    if (!user.gender) {
+      throw new NotFoundException('User has no weight or gender set');
+    }
+
+    const currentTime = new Date();
+    const userWeightInGrams = user.weight * 1000;
+    const genderFactor = user.gender === 'Male' ? 0.68 : 0.55;
+
+    const drinkActions = await this.prisma.drinkAction.findMany({
+      where: { hasEffect: true },
+      include: { drink: { select: { alcoholContent: true } } },
+    });
+
+    let totalBac = 0;
+
+    for (const drinkAction of drinkActions) {
+      const dose = drinkAction.milliliter * (drinkAction.drink.alcoholContent / 100) * 0.789;
+      const timeDifferenceMs = currentTime.getTime() - drinkAction.createdAt.getTime();
+      const eliminated = (timeDifferenceMs / (1000 * 60 * 60)) * 0.016;
+
+      const bac = Math.max(0, (dose / (userWeightInGrams * genderFactor)) * 100 - eliminated);
+      if (bac === 0) {
+        await this.prisma.drinkAction.update({
+          where: { id: drinkAction.id },
+          data: { hasEffect: false },
+        });
+      } else {
+        totalBac += bac;
+      }
+    }
+
+    return { alcoholContent: Math.round(totalBac * 10000) / 10000 };
   }
 
   async remove(authSchId: string): Promise<User> {
