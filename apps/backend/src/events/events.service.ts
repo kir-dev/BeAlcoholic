@@ -53,7 +53,7 @@ export class EventsService {
     if (!event || (event.ownerId !== user.authSchId && !user.isAdmin)) {
       throw new NotFoundException("Event not found or you don't have permission to update it");
     }
-    return await this.prisma.event.update({ where: { id }, data: {} });
+    return await this.prisma.event.update({ where: { id }, data });
   }
 
   async remove(id: string, user: User): Promise<Event> {
