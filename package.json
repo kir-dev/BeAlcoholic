@@ -25,5 +25,8 @@
   },
   "workspaces": [
     "apps/*"
-  ]
+  ],
+  "@snaplet/seed": {
+    "config": "prisma\\seed\\seed.config.ts"
+  }
 }
