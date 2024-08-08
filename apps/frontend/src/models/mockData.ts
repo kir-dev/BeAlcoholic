@@ -1,0 +1,80 @@
+import { DrinkType } from './drink';
+import { EventDetails } from './event';
+
+export const events: EventDetails[] = [
+  {
+    id: 'tesztevent',
+    name: 'Pöci',
+    location: 'Budapest, Irinyi József u. 42, 1117 (8. floor)',
+    ownerId: 'string',
+    startDate: new Date('2022-01-01T22:30:00.000Z'),
+    endDate: new Date('2022-01-02T04:00:00.000Z'),
+    description:
+      'We are going to play a turn-based strategy game played with 20 forint coins, during which wearing a tie is mandatory.',
+    createdAt: new Date('2024-08-08T12:13:40.444Z'),
+    owner: {
+      authSchId: 'string',
+      email: 'john.smith@example.com',
+      firstName: 'Sámuel',
+      lastName: 'Fekete',
+      isAdmin: false,
+      profilePictureUrl: 'string',
+    },
+    drinkActions: [
+      {
+        id: '123e4567-e89b-12d3-a456-426614174000',
+        drinkId: '123e4567-e89b-12d3-a456-426614174001',
+        eventId: '123e4567-e89b-12d3-a456-426614174002',
+        price: 450,
+        milliliter: 500,
+        hasEffect: false,
+        createdAt: new Date('2024-07-27T15:31:11.763Z'),
+        userId: '123e4567-e89b-12d3-a456-426614174003',
+        drink: {
+          id: 'aaaaaaaa-bbbb-cccc-dddd-eeee-ff0123456789',
+          name: 'Soproni meggy',
+          type: DrinkType.SPIRIT,
+          alcoholContent: 4.5,
+          custom: false,
+          description: 'A beer that doesnt really taste like beer.',
+          createdAt: new Date('2024-08-08T12:24:59.402Z'),
+        },
+        user: {
+          authSchId: 'string',
+          email: 'john.smith@example.com',
+          firstName: 'Sámuel',
+          lastName: 'Fekete',
+          isAdmin: false,
+          profilePictureUrl: '',
+        },
+      },
+      {
+        id: '123e4567-e89b-12d3-a456-42661417403430',
+        drinkId: '123e4567-e89b-12d3-a456-426614174001',
+        eventId: '123e4567-e89b-12d3-a456-426614174002',
+        price: 1050,
+        milliliter: 500,
+        hasEffect: false,
+        createdAt: new Date('2024-07-27T15:31:11.763Z'),
+        userId: '123e4567-e89b-12d3-a456-426614174003',
+        drink: {
+          id: 'aaaaaaaa-bbbb-cccc-dddd-eeee-ff0123454789',
+          name: 'Simonyito',
+          type: DrinkType.WINE,
+          alcoholContent: 4.8,
+          custom: false,
+          description: 'Delicious cocktail that tastes just like Simonyi.',
+          createdAt: new Date('2024-08-08T12:24:59.402Z'),
+        },
+        user: {
+          authSchId: 'string',
+          email: 'john.smith@example.com',
+          firstName: 'Charles',
+          lastName: 'Simonyi',
+          isAdmin: false,
+          profilePictureUrl: '',
+        },
+      },
+    ],
+  },
+];
