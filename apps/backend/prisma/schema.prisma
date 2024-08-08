@@ -27,16 +27,16 @@ enum Gender {
 }
 
 model User {
-  authSchId         String  @id
-  email             String? @unique
+  authSchId         String        @id
+  email             String?       @unique
   firstName         String
   lastName          String
   gender            Gender?
   weight            Float?
-  isAdmin           Boolean @default(false)
+  isAdmin           Boolean       @default(false)
   profilePictureUrl String?
   ownedEvents       Event[]
-  // drinkActions      DrinkAction[]
+  drinkActions      DrinkAction[]
   favouriteDrinks   Drink[]
 }
 
@@ -75,8 +75,8 @@ model DrinkAction {
   drink      Drink    @relation(fields: [drinkId], references: [id])
   eventId    String
   event      Event    @relation(fields: [eventId], references: [id])
-  // userId     String
-  // user       User   @relation(fields: [userId], references: [authSchId])
+  userId     String
+  user       User     @relation(fields: [userId], references: [authSchId])
   hasEffect  Boolean  @default(true)
   createdAt  DateTime @default(now())
 }
