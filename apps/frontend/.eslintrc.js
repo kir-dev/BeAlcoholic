@@ -30,6 +30,7 @@ module.exports = {
     'react/no-this-in-sfc': 'error',
     'react/no-unstable-nested-components': 'error',
     'react/prefer-stateless-function': 'error',
+    'react/prop-types': 'off',
     'react/self-closing-comp': 'error',
     'react/style-prop-object': 'error',
     'react/void-dom-elements-no-children': 'error',
