@@ -38,12 +38,26 @@ const main = async () => {
   // eslint-disable-next-line no-underscore-dangle
   await seed._DrinkToUser((x) => x(3));
 
+  let startDate = new Date();
   await seed.event((x) =>
     x(10, {
       id: ({ seed }) => copycat.uuid(seed),
       name: ({ seed }) => `${copycat.word(seed)} Party`,
       location: ({ seed }) => copycat.streetAddress(seed),
       description: ({ seed }) => copycat.sentence(seed),
+      startDate: ({ seed }) => {
+        const daysOffset = copycat.int(seed, { min: -12, max: 0 });
+        const currentDate = new Date();
+        currentDate.setDate(currentDate.getDate() + daysOffset);
+        startDate = currentDate;
+        return currentDate;
+      },
+      endDate: ({ seed }) => {
+        const hoursOffset = copycat.int(seed, { min: 1, max: 24 });
+        const endDate = new Date(startDate);
+        endDate.setHours(Number(startDate.getHours()) + hoursOffset);
+        return endDate;
+      },
     })
   );
 
@@ -52,6 +66,12 @@ const main = async () => {
       id: ({ seed }) => copycat.uuid(seed),
       price: ({ seed }) => copycat.int(seed, { min: 500, max: 10000 }),
       milliliter: ({ seed }) => copycat.int(seed, { min: 200, max: 2000 }),
+      createdAt: ({ seed }) => {
+        const hoursOffset = copycat.int(seed, { min: -24, max: 0 });
+        const currentDate = new Date();
+        currentDate.setHours(currentDate.getHours() + hoursOffset);
+        return currentDate;
+      },
     })
   );
   process.exit();
