@@ -11,6 +11,7 @@ async function bootstrap() {
     .setTitle('BeAlcoholic')
     .setDescription('API for BeAlcoholic')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

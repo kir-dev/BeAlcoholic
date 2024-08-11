@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Event } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
+import { User } from 'src/users/entities/user.entity';
 
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
@@ -9,8 +10,13 @@ import { UpdateEventDto } from './dto/update-event.dto';
 export class EventsService {
   constructor(readonly prisma: PrismaService) {}
 
-  async create(data: CreateEventDto): Promise<Event> {
-    return await this.prisma.event.create({ data });
+  async create(data: CreateEventDto, userId: string): Promise<Event> {
+    return await this.prisma.event.create({
+      data: {
+        ...data,
+        ownerId: userId,
+      },
+    });
   }
 
   async findAll(skip = 0, take = 10): Promise<Event[]> {
@@ -31,19 +37,19 @@ export class EventsService {
     return event;
   }
 
-  async update(id: string, data: UpdateEventDto): Promise<Event> {
-    try {
-      return await this.prisma.event.update({ where: { id }, data });
-    } catch {
-      throw new NotFoundException('Event not found');
+  async update(id: string, data: UpdateEventDto, user: User): Promise<Event> {
+    const event = await this.prisma.event.findUnique({ where: { id } });
+    if (!event || (event.ownerId !== user.authSchId && !user.isAdmin)) {
+      throw new NotFoundException("Event not found or you don't have permission to update it");
     }
+    return await this.prisma.event.update({ where: { id }, data });
   }
 
-  async remove(id: string): Promise<Event> {
-    try {
-      return await this.prisma.event.delete({ where: { id } });
-    } catch {
-      throw new NotFoundException('Event not found');
+  async remove(id: string, user: User): Promise<Event> {
+    const event = await this.prisma.event.findUnique({ where: { id } });
+    if (!event || (event.ownerId !== user.authSchId && !user.isAdmin)) {
+      throw new NotFoundException("Event not found or you don't have permission to delete it");
     }
+    return await this.prisma.event.delete({ where: { id } });
   }
 }

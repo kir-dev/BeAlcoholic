@@ -2,25 +2,84 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { User } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
 
+import { UserBac } from './dto/user-bac.dto';
+import { UserGenderWeight } from './dto/user-gender-weight.dto';
+import { UserWithFavoriteDrinks } from './dto/user-with-favorite-drinks.dto';
+import { UserWithoutWeight } from './dto/user-without-weight.dto';
+
 @Injectable()
 export class UsersService {
   constructor(readonly prisma: PrismaService) {}
 
-  async findOne(authSchId: string): Promise<User | null> {
-    const user = await this.prisma.user.findUnique({ where: { authSchId } });
+  async update(authSchId: string, data: UserGenderWeight) {
+    try {
+      return await this.prisma.user.update({
+        where: { authSchId },
+        data: { gender: data.gender, weight: data.weight },
+      });
+    } catch {
+      throw new NotFoundException('User not found');
+    }
+  }
+
+  async findOne(authSchId: string): Promise<UserWithFavoriteDrinks> {
+    const user = await this.prisma.user.findUnique({
+      where: { authSchId },
+      include: { favouriteDrinks: true },
+      omit: { weight: true },
+    });
     if (!user) {
       throw new NotFoundException('User not found');
     }
     return user;
   }
 
-  async findAll(): Promise<User[]> {
-    return await this.prisma.user.findMany();
+  async findAll(): Promise<UserWithoutWeight[]> {
+    return await this.prisma.user.findMany({ omit: { weight: true } });
   }
 
-  async remove(id: string): Promise<User> {
+  async calculateBloodAlcoholContent(user: User): Promise<UserBac> {
+    if (!user.weight) {
+      throw new NotFoundException('User has no weight or gender set');
+    }
+
+    if (!user.gender) {
+      throw new NotFoundException('User has no weight or gender set');
+    }
+
+    const currentTime = new Date();
+    const userWeightInGrams = user.weight * 1000;
+    const genderFactor = user.gender === 'Male' ? 0.68 : 0.55;
+
+    const drinkActions = await this.prisma.drinkAction.findMany({
+      where: { hasEffect: true },
+      include: { drink: { select: { alcoholContent: true } } },
+    });
+
+    let totalBac = 0;
+
+    for (const drinkAction of drinkActions) {
+      const dose = drinkAction.milliliter * (drinkAction.drink.alcoholContent / 100) * 0.789;
+      const timeDifferenceMs = currentTime.getTime() - drinkAction.createdAt.getTime();
+      const eliminated = (timeDifferenceMs / (1000 * 60 * 60)) * 0.016;
+
+      const bac = Math.max(0, (dose / (userWeightInGrams * genderFactor)) * 100 - eliminated);
+      if (bac === 0) {
+        await this.prisma.drinkAction.update({
+          where: { id: drinkAction.id },
+          data: { hasEffect: false },
+        });
+      } else {
+        totalBac += bac;
+      }
+    }
+
+    return { alcoholContent: Math.round(totalBac * 10000) / 10000 };
+  }
+
+  async remove(authSchId: string): Promise<User> {
     try {
-      return await this.prisma.user.delete({ where: { authSchId: id } });
+      return await this.prisma.user.delete({ where: { authSchId } });
     } catch (error) {
       throw new NotFoundException('User not found');
     }

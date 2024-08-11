@@ -1,7 +1,13 @@
-import { Controller, Delete, Get, Param, ParseUUIDPipe } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from '@kir-dev/passport-authsch';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { User } from '@prisma/client';
 
-import { User } from './entities/user.entity';
+import { UserBac } from './dto/user-bac.dto';
+import { UserGenderWeight } from './dto/user-gender-weight.dto';
+import { UserWithFavoriteDrinks } from './dto/user-with-favorite-drinks.dto';
+import { UserWithoutWeight } from './dto/user-without-weight.dto';
 import { UsersService } from './users.service';
 @ApiTags('Users')
 @Controller('users')
@@ -9,20 +15,51 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get(':id')
-  // @UseGuards(AuthGuard())
-  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<User> {
-    return this.usersService.findOne(id);
+  @ApiOperation({ summary: 'Get user details by ID' })
+  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<UserWithFavoriteDrinks> {
+    return await this.usersService.findOne(id);
   }
 
   @Get()
-  // @UseGuards(AuthGuard())
-  async findAll(): Promise<User[]> {
-    return this.usersService.findAll();
+  @ApiOperation({ summary: 'Get all users' })
+  async findAll(): Promise<UserWithoutWeight[]> {
+    return await this.usersService.findAll();
+  }
+
+  @Get('/bac')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get BAC (Blood Alcohol Content)' })
+  async calculateBloodAlcoholContent(@CurrentUser() user: User): Promise<UserBac> {
+    return await this.usersService.calculateBloodAlcoholContent(user);
   }
 
   @Delete(':id')
-  // @UseGuards(AuthGuard())
+  @ApiOperation({ summary: 'Delete user by ID' })
   async remove(@Param('id', ParseUUIDPipe) id: string): Promise<User> {
-    return this.usersService.remove(id);
+    return await this.usersService.remove(id);
+  }
+
+  @Patch(':id/')
+  @ApiOperation({ summary: 'Edit Gender and Weight' })
+  async update(@Param('id', ParseUUIDPipe) id: string, @Body() userGenderWeight: UserGenderWeight) {
+    await this.usersService.update(id, userGenderWeight);
+    return { message: `User was updated successfully: ${userGenderWeight.gender}, ${userGenderWeight.weight} kg` };
+  }
+
+  @Post(':id/favoriteDrinks/:favoriteDrinkId')
+  addFavoriteDrink(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('favoriteDrinkId', new ParseUUIDPipe()) favoriteDrinkId: string
+  ) {
+    return this.usersService.addFavoriteDrink(id, favoriteDrinkId);
+  }
+
+  @Delete(':id/favoriteDrinks/:favoriteDrinkId')
+  removeFavoriteDrink(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('favoriteDrinkId', new ParseUUIDPipe()) favoriteDrinkId: string
+  ) {
+    return this.usersService.removeFavoriteDrink(id, favoriteDrinkId);
   }
 }

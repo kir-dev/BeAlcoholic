@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["omitApi"]
 }
 
 datasource db {
@@ -20,14 +21,22 @@ enum DrinkType {
   COCKTAIL
 }
 
+enum Gender {
+  Male
+  Female
+}
+
 model User {
-  authSchId         String  @id
-  email             String  @unique
+  authSchId         String        @id
+  email             String?       @unique
   firstName         String
   lastName          String
+  gender            Gender?
+  weight            Float?
+  isAdmin           Boolean       @default(false)
   profilePictureUrl String?
-  // ownedEvents       Event[]
-  // drinkActions      DrinkAction[]
+  ownedEvents       Event[]
+  drinkActions      DrinkAction[]
   favouriteDrinks   Drink[]
 }
 
@@ -46,8 +55,8 @@ model Drink {
 
 model Event {
   id          String   @id @default(uuid())
-  // ownerId     String
-  // owner       User     @relation(fields: [ownerId], references: [authSchId])
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [authSchId])
   name        String
   location    String
   startDate   DateTime
@@ -59,13 +68,15 @@ model Event {
 }
 
 model DrinkAction {
-  id         String @id @default(uuid())
+  id         String   @id @default(uuid())
   price      Int
   milliliter Int
   drinkId    String
-  drink      Drink  @relation(fields: [drinkId], references: [id])
+  drink      Drink    @relation(fields: [drinkId], references: [id])
   eventId    String
-  event      Event  @relation(fields: [eventId], references: [id])
-  // userId     String
-  // user       User   @relation(fields: [userId], references: [authSchId])
+  event      Event    @relation(fields: [eventId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [authSchId])
+  hasEffect  Boolean  @default(true)
+  createdAt  DateTime @default(now())
 }
