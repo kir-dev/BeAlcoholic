@@ -82,6 +82,6 @@
     "testEnvironment": "node"
   },
   "@snaplet/seed": {
-    "config": "prisma\\seed\\seed.config.ts"
+    "config": "prisma/seed/seed.config.ts"
   }
 }
