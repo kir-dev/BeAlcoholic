@@ -12,14 +12,6 @@ const main = async () => {
 
   await seed.$resetDatabase();
 
-  // await seed.drinkAction((x) =>
-  //   x(10, {
-  //     id: ({ seed }) => copycat.uuid(seed),
-  //     price: ({ seed }) => copycat.int(seed, { min: 500, max: 10000 }),
-  //     milliliter: ({ seed }) => copycat.int(seed, { min: 200, max: 2000 }),
-  //   })
-  // );
-
   await seed.drink((x) =>
     x(10, {
       id: ({ seed }) => copycat.uuid(seed),
@@ -29,36 +21,39 @@ const main = async () => {
     })
   );
 
-  const { user } = await seed.user(
-    (x) =>
-      x(10, {
-        authSchId: ({ seed }) => copycat.uuid(seed),
-        email: ({ seed }) => copycat.email(seed),
-        firstName: ({ seed }) => copycat.firstName(seed),
-        lastName: ({ seed }) => copycat.lastName(seed),
-        weight: ({ seed }) => copycat.float(seed, { min: 50, max: 120 }),
-        profilePictureUrl: ({ seed }) => {
-          const pathNumber = copycat.int(seed, { min: 14641, max: 104521460 });
-          return `https://bealcoholic/profile${pathNumber}.jpg`;
-        },
-      }),
-    { connect: {} }
+  await seed.user((x) =>
+    x(10, {
+      authSchId: ({ seed }) => copycat.uuid(seed),
+      email: ({ seed }) => copycat.email(seed),
+      firstName: ({ seed }) => copycat.firstName(seed),
+      lastName: ({ seed }) => copycat.lastName(seed),
+      weight: ({ seed }) => copycat.float(seed, { min: 50, max: 120 }),
+      profilePictureUrl: ({ seed }) => {
+        const pathNumber = copycat.int(seed, { min: 14641, max: 104521460 });
+        return `https://bealcoholic/profile${pathNumber}.jpg`;
+      },
+    })
   );
 
   // eslint-disable-next-line no-underscore-dangle
   await seed._DrinkToUser((x) => x(3));
 
-  await seed.event(
-    (x) =>
-      x(10, {
-        id: ({ seed }) => copycat.uuid(seed),
-        name: ({ seed }) => `${copycat.word(seed)} Party`,
-        location: ({ seed }) => copycat.streetAddress(seed),
-        description: ({ seed }) => copycat.sentence(seed),
-      }),
-    { connect: { user } }
+  await seed.event((x) =>
+    x(10, {
+      id: ({ seed }) => copycat.uuid(seed),
+      name: ({ seed }) => `${copycat.word(seed)} Party`,
+      location: ({ seed }) => copycat.streetAddress(seed),
+      description: ({ seed }) => copycat.sentence(seed),
+    })
   );
 
+  await seed.drinkAction((x) =>
+    x(10, {
+      id: ({ seed }) => copycat.uuid(seed),
+      price: ({ seed }) => copycat.int(seed, { min: 500, max: 10000 }),
+      milliliter: ({ seed }) => copycat.int(seed, { min: 200, max: 2000 }),
+    })
+  );
   process.exit();
 };
 

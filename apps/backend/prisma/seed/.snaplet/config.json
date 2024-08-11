@@ -1,3 +1,4 @@
 {
-  "adapter": "prisma"
+  "adapter": "prisma",
+  "projectDescription": "aspdoh"
 }
