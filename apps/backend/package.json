@@ -5,6 +5,9 @@
   "author": "Kir-Dev",
   "private": true,
   "license": "MIT",
+  "prisma": {
+    "seed": "tsx prisma/seed/seed.ts"
+  },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
@@ -39,6 +42,8 @@
     "@nestjs/schematics": "^10.1.1",
     "@nestjs/swagger": "^7.3.1",
     "@nestjs/testing": "^10.3.8",
+    "@snaplet/copycat": "^5.0.0",
+    "@snaplet/seed": "0.98.0",
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.12.7",
@@ -56,6 +61,7 @@
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "4.2.0",
+    "tsx": "^4.16.5",
     "typescript": "^5.4.5"
   },
   "jest": {
@@ -74,5 +80,8 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "@snaplet/seed": {
+    "config": "prisma/seed/seed.config.ts"
   }
 }
