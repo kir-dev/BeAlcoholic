@@ -53,45 +53,13 @@ yarn start:frontend # Starts on http://localhost:3000
 
 ### How to use Snaplet seeding
 
-You can use the seeding script to populate your database with realistic mock data using the Snaplet Seed library and its `copycat` function.
-
-1. Prerequisites:
-
-Make sure you have Snaplet Seed and Copycat installed:
+You can use the seeding script to populate your database with realistic mock data using the Snaplet Seed.
+From the Backend directory run the following command to sync up the seeding script with the prisma schema:
 
 ```bash
-npm install @snaplet/seed @snaplet/copycat
+yarn @snaplet/seed sync
 ```
 
-Your Prisma schema should be up-to-date and reflect the database structure.
-Run the Inicialization command:
-
-```bash
-npx @snaplet/seed init prisma/seed
-```
-
-2. Customization:
-
-- Adapt the copycat functions within the script to generate data that aligns with your specific application's needs. You can use a wide variety of built-in functions or create custom ones.
-  Adjust the number of records created for each model (e.g., x(10) creates 10 records) to match your desired dataset size.
-  Modify the generated data to mach your needs with the copycat functions (e.g.,
-
-```bash
-await seed.drinkAction((x) =>
-    x(10, {
-      id: ({ seed }) => copycat.uuid(seed),
-      price: ({ seed }) => copycat.int(seed, { min: 500, max: 10000 }),
-      milliliter: ({ seed }) => copycat.int(seed, { min: 200, max: 2000 }),
-      },
-    })
-  );
-```
-
-)
-
-3. Execution:
-
-Save the script as a .ts file (e.g., seed.ts).
 Run the script using a TypeScript runner:
 
 ```bash
