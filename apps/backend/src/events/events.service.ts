@@ -20,17 +20,19 @@ export class EventsService {
           ownerId: userId,
           drinkActions: {
             create:
-              drinkActions?.map((action) => ({
+              drinkActions?.map(({ drinkId, ...action }) => ({
                 ...action,
-                drink: { connect: { id: action.drinkId } },
+                drink: { connect: { id: drinkId } },
               })) || [],
           },
         },
         include: { drinkActions: true },
       });
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
-        throw new BadRequestException('drinkId or eventId does not exist');
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new BadRequestException('foreign key constraint violation: invalid Drink ID');
+        }
       }
       throw error;
     }
