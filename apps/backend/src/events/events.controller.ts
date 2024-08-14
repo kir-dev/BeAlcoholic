@@ -14,10 +14,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { User } from 'src/users/entities/user.entity';
 
 import { CreateEventDto } from './dto/create-event.dto';
+import { EventWithDrinkActionsAndUser } from './dto/event-with-drinkActions-and-user.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Event } from './entities/event.entity';
 import { EventsService } from './events.service';
@@ -45,7 +46,8 @@ export class EventsController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<Event> {
+  @ApiOkResponse({ type: EventWithDrinkActionsAndUser })
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<EventWithDrinkActionsAndUser> {
     return this.eventsService.findOne(id);
   }
 
