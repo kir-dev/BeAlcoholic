@@ -57,7 +57,7 @@ You can use the seeding script to populate your database with realistic mock dat
 From the Backend directory run the following command to sync up the seeding script with the prisma schema:
 
 ```bash
-yarn @snaplet/seed sync
+npx @snaplet/seed sync
 ```
 
 Run the script using a TypeScript runner:
