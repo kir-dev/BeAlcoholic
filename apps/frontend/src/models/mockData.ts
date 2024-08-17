@@ -19,6 +19,7 @@ export const events: EventDetails[] = [
       lastName: 'Fekete',
       isAdmin: false,
       profilePictureUrl: 'string',
+      createdAt: new Date('2024-08-08T12:13:40.444Z'),
     },
     drinkActions: [
       {
@@ -46,6 +47,7 @@ export const events: EventDetails[] = [
           lastName: 'Fekete',
           isAdmin: false,
           profilePictureUrl: '',
+          createdAt: new Date('2024-08-08T12:13:40.444Z'),
         },
       },
       {
@@ -73,6 +75,7 @@ export const events: EventDetails[] = [
           lastName: 'Simonyi',
           isAdmin: false,
           profilePictureUrl: '',
+          createdAt: new Date('2024-08-08T12:13:40.444Z'),
         },
       },
     ],
@@ -94,6 +97,7 @@ export const events: EventDetails[] = [
       lastName: 'Várallyay',
       isAdmin: false,
       profilePictureUrl: 'string',
+      createdAt: new Date('2024-08-08T12:13:40.444Z'),
     },
     drinkActions: [
       {
@@ -121,6 +125,7 @@ export const events: EventDetails[] = [
           lastName: 'Fekete',
           isAdmin: false,
           profilePictureUrl: '',
+          createdAt: new Date('2024-08-08T12:13:40.444Z'),
         },
       },
       {
@@ -148,6 +153,7 @@ export const events: EventDetails[] = [
           lastName: 'Simonyi',
           isAdmin: false,
           profilePictureUrl: '',
+          createdAt: new Date('2024-08-08T12:13:40.444Z'),
         },
       },
     ],

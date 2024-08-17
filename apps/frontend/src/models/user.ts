@@ -5,4 +5,5 @@ export interface PublicUser {
   lastName: string;
   isAdmin: boolean;
   profilePictureUrl?: string;
+  createdAt: Date;
 }
