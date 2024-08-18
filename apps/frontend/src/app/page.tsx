@@ -39,9 +39,9 @@ export default function EventFeedPage() {
       </div>
 
       <div className='flex flex-col items-center justify-center'>
-        <div className='w-[950px]'>
+        <div className='w-[61rem]'>
           {events.map((event) => (
-            <div key={event.id} className='my-3'>
+            <div key={event.id} className='my-4'>
               {/* <Link href={`/events/${event.id}`}> */}
               <div className='bg-white rounded-lg shadow-md p-4 flex items-start'>
                 <div className='flex-shrink-0 mr-4'>
@@ -53,7 +53,7 @@ export default function EventFeedPage() {
                     Létrehozta: <UserHoverCard user={event.owner} />
                   </p>
                   <div>
-                    <DrinkList />
+                    <DrinkList event={event} />
                   </div>
                   <div>
                     <EventDiscription event={event} />

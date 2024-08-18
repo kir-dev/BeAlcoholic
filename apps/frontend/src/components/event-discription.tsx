@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { EventDetails } from '@/models/event';
 
@@ -7,6 +7,7 @@ interface Props {
 }
 export function EventDiscription({ event }: Props) {
   const [showFullText, setShowFullText] = useState(false);
+  const descriptionRef = useRef<HTMLParagraphElement>(null);
 
   const handleShowMoreClick = () => {
     setShowFullText(true);
@@ -16,30 +17,32 @@ export function EventDiscription({ event }: Props) {
     setShowFullText(false);
   };
 
+  useEffect(() => {
+    if (descriptionRef.current) {
+      descriptionRef.current.style.maxHeight = showFullText ? `${descriptionRef.current.scrollHeight}px` : '1.5rem';
+    }
+  }, [showFullText]);
+
   if (!event?.description || event?.description.trim() === '') {
     return null;
   }
 
   return (
-    <div>
-      <p>
-        {/* eslint-disable-next-line no-nested-ternary */}
-        {showFullText
-          ? event.description
-          : event?.description.length > 100
-            ? `${event?.description.slice(0, 100)}... `
-            : event.description}
-        {!showFullText && event?.description.length > 100 && (
-          <button onClick={handleShowMoreClick} className='text-blue-500 underline'>
-            Show more
-          </button>
-        )}
-        {showFullText && (
-          <button onClick={handleShowLessClick} className='text-blue-500 underline'>
-            Show less
-          </button>
-        )}
+    <div className='w-[53rem]'>
+      <p ref={descriptionRef} className='overflow-hidden transition-max-h duration-500'>
+        {event.description}
       </p>
+
+      {!showFullText && event?.description.length > 100 && (
+        <button onClick={handleShowMoreClick} className='underline'>
+          Show more
+        </button>
+      )}
+      {showFullText && (
+        <button onClick={handleShowLessClick} className='underline'>
+          Show less
+        </button>
+      )}
     </div>
   );
 }
