@@ -1,5 +1,5 @@
-import { cocktail } from '@lucide/lab';
-import { Beer, Icon, Skull, Wine } from 'lucide-react';
+import { cocktail, wineGlassBottle } from '@lucide/lab';
+import { Beer, Icon, Skull } from 'lucide-react';
 
 import { DrinkType } from '@/models/drink';
 
@@ -20,7 +20,7 @@ export function DrinkTypeBadge({ type }: Props) {
     case DrinkType.WINE:
       return (
         <Badge variant='outline' className='bg-red-900 text-white'>
-          <Wine />
+          <Icon iconNode={wineGlassBottle} />
         </Badge>
       );
     case DrinkType.COCKTAIL:

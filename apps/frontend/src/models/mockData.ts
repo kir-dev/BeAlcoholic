@@ -139,7 +139,7 @@ export const events: EventDetails[] = [
         drink: {
           id: 'aaaaaaaa-bbbb-cccc-dddd-eeee-ff0123454789',
           name: 'Kir Koktél',
-          type: DrinkType.SPIRIT,
+          type: DrinkType.COCKTAIL,
           alcoholContent: 70,
           custom: false,
           description: 'Delicious cocktail that tastes just like Kir-Dev.',
