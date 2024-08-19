@@ -1,10 +1,24 @@
 import { CurrentUser } from '@kir-dev/passport-authsch';
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  DefaultValuePipe,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { User } from 'src/users/entities/user.entity';
 
 import { CreateEventDto } from './dto/create-event.dto';
+import { EventWithDrinkActionsAndUser } from './dto/event-with-drinkActions-and-user.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Event } from './entities/event.entity';
 import { EventsService } from './events.service';
@@ -22,12 +36,18 @@ export class EventsController {
   }
 
   @Get()
-  async findAll(): Promise<Event[]> {
-    return this.eventsService.findAll();
+  @ApiQuery({ name: 'skip', required: false, type: Number })
+  @ApiQuery({ name: 'take', required: false, type: Number })
+  async findAll(
+    @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip?: number,
+    @Query('take', new DefaultValuePipe(10), ParseIntPipe) take?: number
+  ): Promise<Event[]> {
+    return this.eventsService.findAll(take, skip);
   }
 
   @Get(':id')
-  async findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<Event> {
+  @ApiOkResponse({ type: EventWithDrinkActionsAndUser })
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<EventWithDrinkActionsAndUser> {
     return this.eventsService.findOne(id);
   }
 

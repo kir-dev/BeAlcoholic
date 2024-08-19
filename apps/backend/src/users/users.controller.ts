@@ -1,7 +1,10 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from '@kir-dev/passport-authsch';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
+import { UserBac } from './dto/user-bac.dto';
 import { UserGenderWeight } from './dto/user-gender-weight.dto';
 import { UserWithFavoriteDrinks } from './dto/user-with-favorite-drinks.dto';
 import { UserWithoutWeight } from './dto/user-without-weight.dto';
@@ -23,6 +26,14 @@ export class UsersController {
     return await this.usersService.findAll();
   }
 
+  @Get('/bac')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get BAC (Blood Alcohol Content)' })
+  async calculateBloodAlcoholContent(@CurrentUser() user: User): Promise<UserBac> {
+    return await this.usersService.calculateBloodAlcoholContent(user);
+  }
+
   @Delete(':id')
   @ApiOperation({ summary: 'Delete user by ID' })
   async remove(@Param('id', ParseUUIDPipe) id: string): Promise<User> {
@@ -31,7 +42,6 @@ export class UsersController {
 
   @Patch(':id/')
   @ApiOperation({ summary: 'Edit Gender and Weight' })
-  @ApiBody({ type: UserGenderWeight })
   async update(@Param('id', ParseUUIDPipe) id: string, @Body() userGenderWeight: UserGenderWeight) {
     await this.usersService.update(id, userGenderWeight);
     return { message: `User was updated successfully: ${userGenderWeight.gender}, ${userGenderWeight.weight} kg` };

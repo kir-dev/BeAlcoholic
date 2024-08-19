@@ -36,4 +36,23 @@ export class DrinkAction {
   @IsNumber()
   @Min(0)
   milliliter: number;
+
+  /**
+   * Shows if the alcohol still has effect on the user.
+   * @example false
+   */
+  hasEffect: boolean;
+
+  /**
+   * The date and time when the alcohol was consumed
+   * @example 2024-07-27T15:31:11.763Z
+   */
+  createdAt: Date;
+
+  /**
+   * Id of the user who consumed the alcohol
+   * @example "123e4567-e89b-12d3-a456-426614174003"
+   */
+  @IsUUID()
+  userId: string;
 }

@@ -1,5 +1,8 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from '@kir-dev/passport-authsch';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { User } from '@prisma/client';
 
 import { DrinkActionsService } from './drink-action.service';
 import { CreateDrinkActionDto } from './dto/create-drink-action.dto';
@@ -13,8 +16,10 @@ export class DrinkActionsController {
   constructor(private readonly drinkActionsService: DrinkActionsService) {}
 
   @Post()
-  async create(@Body() createDrinkActionDto: CreateDrinkActionDto): Promise<DrinkAction> {
-    return this.drinkActionsService.create(createDrinkActionDto);
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  async create(@Body() createDrinkActionDto: CreateDrinkActionDto, @CurrentUser() user: User): Promise<DrinkAction> {
+    return this.drinkActionsService.create(createDrinkActionDto, user.authSchId);
   }
 
   @Get()
@@ -28,15 +33,20 @@ export class DrinkActionsController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() updateDrinkActionDto: UpdateDrinkActionDto
+    @Body() updateDrinkActionDto: UpdateDrinkActionDto,
+    @CurrentUser() user: User
   ): Promise<DrinkAction> {
-    return this.drinkActionsService.update(id, updateDrinkActionDto);
+    return this.drinkActionsService.update(id, updateDrinkActionDto, user);
   }
 
   @Delete(':id')
-  async remove(@Param('id', new ParseUUIDPipe()) id: string): Promise<DrinkAction> {
-    return this.drinkActionsService.remove(id);
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  async remove(@Param('id', new ParseUUIDPipe()) id: string, @CurrentUser() user: User): Promise<DrinkAction> {
+    return this.drinkActionsService.remove(id, user);
   }
 }

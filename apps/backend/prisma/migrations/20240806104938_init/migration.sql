@@ -7,7 +7,7 @@ CREATE TYPE "Gender" AS ENUM ('Male', 'Female');
 -- CreateTable
 CREATE TABLE "User" (
     "authSchId" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
+    "email" TEXT,
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
     "gender" "Gender",
@@ -52,6 +52,9 @@ CREATE TABLE "DrinkAction" (
     "milliliter" INTEGER NOT NULL,
     "drinkId" TEXT NOT NULL,
     "eventId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "hasEffect" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "DrinkAction_pkey" PRIMARY KEY ("id")
 );
@@ -79,6 +82,9 @@ ALTER TABLE "DrinkAction" ADD CONSTRAINT "DrinkAction_drinkId_fkey" FOREIGN KEY 
 
 -- AddForeignKey
 ALTER TABLE "DrinkAction" ADD CONSTRAINT "DrinkAction_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "Event"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "DrinkAction" ADD CONSTRAINT "DrinkAction_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("authSchId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_DrinkToUser" ADD CONSTRAINT "_DrinkToUser_A_fkey" FOREIGN KEY ("A") REFERENCES "Drink"("id") ON DELETE CASCADE ON UPDATE CASCADE;

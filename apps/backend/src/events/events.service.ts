@@ -5,6 +5,7 @@ import { PrismaService } from 'nestjs-prisma';
 import { User } from 'src/users/entities/user.entity';
 
 import { CreateEventDto } from './dto/create-event.dto';
+import { EventWithDrinkActionsAndUser } from './dto/event-with-drinkActions-and-user.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 
 @Injectable()
@@ -38,12 +39,29 @@ export class EventsService {
     }
   }
 
-  async findAll(): Promise<Event[]> {
-    return await this.prisma.event.findMany();
+  async findAll(skip = 0, take = 10): Promise<Event[]> {
+    return await this.prisma.event.findMany({
+      orderBy: {
+        endDate: 'desc',
+      },
+      skip,
+      take,
+    });
   }
 
-  async findOne(id: string): Promise<Event> {
-    const event = await this.prisma.event.findUnique({ where: { id } });
+  async findOne(id: string): Promise<EventWithDrinkActionsAndUser> {
+    const event = await this.prisma.event.findUnique({
+      where: { id },
+      include: {
+        owner: true,
+        drinkActions: {
+          include: {
+            drink: true,
+            user: true,
+          },
+        },
+      },
+    });
     if (!event) {
       throw new NotFoundException('Event not found');
     }
