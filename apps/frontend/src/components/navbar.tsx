@@ -9,7 +9,7 @@ export function Navbar() {
   const avatarSrc = 'https://via.placeholder.com/150';
 
   return (
-    <nav className='bg-gray-800 p-4'>
+    <nav className='bg-gray-800 p-4 mb-4'>
       <div className='container mx-auto flex justify-between items-center'>
         {/* bealcoholic sign */}
         <span className='text-white text-3xl font-bold justify-between'>BeAlcoholic.</span>
