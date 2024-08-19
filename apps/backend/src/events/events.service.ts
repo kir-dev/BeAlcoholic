@@ -24,6 +24,7 @@ export class EventsService {
               drinkActions?.map(({ drinkId, ...action }) => ({
                 ...action,
                 drink: { connect: { id: drinkId } },
+                user: { connect: { authSchId: userId } },
               })) || [],
           },
         },
