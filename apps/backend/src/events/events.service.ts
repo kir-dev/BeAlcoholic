@@ -1,5 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Event } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaService } from 'nestjs-prisma';
 import { User } from 'src/users/entities/user.entity';
 
@@ -12,12 +13,31 @@ export class EventsService {
   constructor(readonly prisma: PrismaService) {}
 
   async create(data: CreateEventDto, userId: string): Promise<Event> {
-    return await this.prisma.event.create({
-      data: {
-        ...data,
-        ownerId: userId,
-      },
-    });
+    const { drinkActions, ...eventData } = data;
+    try {
+      return await this.prisma.event.create({
+        data: {
+          ...eventData,
+          ownerId: userId,
+          drinkActions: {
+            create:
+              drinkActions?.map(({ drinkId, ...action }) => ({
+                ...action,
+                drink: { connect: { id: drinkId } },
+                user: { connect: { authSchId: userId } },
+              })) || [],
+          },
+        },
+        include: { drinkActions: true },
+      });
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new BadRequestException('foreign key constraint violation: invalid Drink ID');
+        }
+      }
+      throw error;
+    }
   }
 
   async findAll(skip = 0, take = 10): Promise<Event[]> {
