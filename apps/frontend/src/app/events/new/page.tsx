@@ -2,13 +2,16 @@
 
 import { useState } from 'react';
 
+type simpleDrink = {
+  id: number;
+  name: string;
+};
 // Mock data for drinks
-const mockDrinks = [
+const mockDrinks: simpleDrink[] = [
   { id: 1, name: 'Gösser' },
   { id: 2, name: 'Heineken' },
   { id: 3, name: 'Soproni' },
 ];
-
 export default function NewEventPage() {
   // States for event fields
   const [eventName, setEventName] = useState('');
@@ -16,15 +19,45 @@ export default function NewEventPage() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [description, setDescription] = useState('');
-  const [consumedDrinks, setConsumedDrinks] = useState<{ id: number; name: string }[]>([]);
+  const [consumedDrinks, setConsumedDrinks] = useState<Map<simpleDrink, number>>(new Map());
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const addDrink = (drink: { id: number; name: string }) => {
-    setConsumedDrinks([...consumedDrinks, drink]);
+  let elements: any = Array.from(consumedDrinks.entries()).map(([drink, value]) => (
+    <li key={drink.id} className='mb-2'>
+      {drink.name} {value}x{' '}
+      <button
+        className='bg-gray-600 hover:bg-gray-500 text-white font-bold py-0.25 px-2 rounded-full '
+        onClick={() => {
+          removeDrink(drink);
+        }}
+      >
+        -
+      </button>
+    </li>
+  ));
+  if (elements.length === 0) {
+    elements = <li className='text-gray-500'>Nincs hozzáadott ital</li>;
+  }
+
+  const addDrink = (drink: simpleDrink) => {
+    const prevDrinkCount = consumedDrinks.get(drink);
+    if (prevDrinkCount) {
+      setConsumedDrinks((prevState) => new Map(prevState.set(drink, prevDrinkCount + 1)));
+    } else {
+      setConsumedDrinks((prevState) => new Map(prevState.set(drink, 1)));
+    }
   };
-  const removeDrink = (drink: { id: number; name: string }) => {
-    setConsumedDrinks(consumedDrinks.filter((d) => d.id !== drink.id));
-    if (consumedDrinks.length > 0) {
+  const removeDrink = (drink: simpleDrink) => {
+    const prevDrinkCount = consumedDrinks.get(drink);
+    if (prevDrinkCount) {
+      if (prevDrinkCount > 1) setConsumedDrinks((prevState) => new Map(prevState.set(drink, prevDrinkCount - 1)));
+      else
+        setConsumedDrinks((prevState) => {
+          prevState.delete(drink);
+          return new Map(prevState);
+        });
+    }
+    if (consumedDrinks.values.length > 0) {
       setIsDialogOpen(false);
     }
   };
@@ -96,25 +129,7 @@ export default function NewEventPage() {
         {/* Consumed Drinks on the right */}
         <div>
           <label className='block font-bold mb-2'>Eddig elfogyasztott italok</label>
-          <ul className='mb-4'>
-            {consumedDrinks.length > 0 ? (
-              consumedDrinks.map((drink) => (
-                <li key={drink.id} className='mb-2'>
-                  {drink.name}{' '}
-                  <button
-                    className='bg-gray-600 hover:bg-gray-500 text-white font-bold py-0.25 px-2 rounded-full '
-                    onClick={() => {
-                      removeDrink(drink);
-                    }}
-                  >
-                    -
-                  </button>
-                </li>
-              ))
-            ) : (
-              <li className='text-gray-500'>Nincs hozzáadott ital</li>
-            )}
-          </ul>
+          <ul className='mb-4'>{elements}</ul>
           <button
             className='bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full'
             onClick={() => setIsDialogOpen(true)}
