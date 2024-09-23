@@ -22,16 +22,14 @@ export class EventsService {
         data: {
           ...eventData,
           ownerId: userId,
-          drinkActions:
-            drinkActions.length > 0
-              ? {
-                  create: drinkActions.map(({ drinkId, ...action }) => ({
-                    ...action,
-                    drink: { connect: { id: drinkId } },
-                    user: { connect: { authSchId: userId } },
-                  })),
-                }
-              : undefined,
+          drinkActions: {
+            create:
+              drinkActions?.map(({ drinkId, ...action }) => ({
+                ...action,
+                drink: { connect: { id: drinkId } },
+                user: { connect: { authSchId: userId } },
+              })) || [],
+          },
         },
         include: { drinkActions: true },
       });

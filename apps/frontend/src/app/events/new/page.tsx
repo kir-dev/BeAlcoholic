@@ -29,8 +29,9 @@ const formSchema = z.object({
     .optional(),
 });
 
-async function onSubmit(values: z.infer<typeof formSchema>) {
+async function onSubmit(event: React.FormEvent, values: z.infer<typeof formSchema>) {
   console.log('Á');
+  event.preventDefault();
   try {
     const response = await axiosConfig.post('/events', values);
     if (response.status === 200) {
@@ -71,6 +72,7 @@ export default function NewEventPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const addDrink = (drink: simpleDrink) => {
+    //meg kell meg javitani
     const existingDrinks = form.getValues('drinkActions') || [];
     const drinkIndex = existingDrinks.findIndex((d) => d.id === drink.id);
 
@@ -91,7 +93,7 @@ export default function NewEventPage() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+      <form onSubmit={(event) => form.handleSubmit((values) => onSubmit(event, values))(event)} className='space-y-4'>
         <div className='container mx-auto p-4'>
           <h1 className='text-3xl font-bold mb-4 my-3'>Új esemény</h1>
 

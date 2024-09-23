@@ -20,7 +20,6 @@
     "test:cov": "jest --coverage"
   },
   "dependencies": {
-    "@hookform/resolvers": "^3.9.0",
     "@kir-dev/passport-authsch": "^2.0.3",
     "@nestjs/cli": "^10.3.2",
     "@nestjs/common": "^10.3.8",
@@ -31,17 +30,12 @@
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.3.8",
     "@prisma/client": "^5.13.0",
-    "@radix-ui/react-avatar": "^1.1.0",
-    "@radix-ui/react-label": "^2.1.0",
-    "js-cookie": "^3.0.5",
     "nestjs-prisma": "^0.23.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
-    "react-hook-form": "^7.53.0",
     "reflect-metadata": "^0.2.2",
-    "rimraf": "^5.0.5",
-    "rxjs": "^7.8.1",
-    "zod": "^3.23.8"
+    "rimraf": "^5.0.5"
+
   },
   "devDependencies": {
     "@nestjs/cli": "^10.3.2",
