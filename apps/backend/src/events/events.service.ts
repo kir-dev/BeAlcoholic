@@ -15,18 +15,23 @@ export class EventsService {
   async create(data: CreateEventDto, userId: string): Promise<Event> {
     const { drinkActions, ...eventData } = data;
     try {
+      console.log('eventData:', eventData);
+      console.log('drinkActions:', drinkActions);
+      console.log('userId:', userId);
       return await this.prisma.event.create({
         data: {
           ...eventData,
           ownerId: userId,
-          drinkActions: {
-            create:
-              drinkActions?.map(({ drinkId, ...action }) => ({
-                ...action,
-                drink: { connect: { id: drinkId } },
-                user: { connect: { authSchId: userId } },
-              })) || [],
-          },
+          drinkActions:
+            drinkActions.length > 0
+              ? {
+                  create: drinkActions.map(({ drinkId, ...action }) => ({
+                    ...action,
+                    drink: { connect: { id: drinkId } },
+                    user: { connect: { authSchId: userId } },
+                  })),
+                }
+              : undefined,
         },
         include: { drinkActions: true },
       });
