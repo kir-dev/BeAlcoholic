@@ -184,7 +184,7 @@ export default function NewEventPage() {
             <div>
               <FormLabel className='block mb-2 font-bold text-lg'>Eddig elfogyasztott italok</FormLabel>
               <ul className='mb-4'>
-                {form.watch('drinkActions').length === 0 ? (
+                {form.watch('drinkActions')?.length === 0 ? (
                   <li className='text-gray-500'>Nincs hozzáadott ital</li>
                 ) : (
                   form.watch('drinkActions')?.map((drink) => (
@@ -202,9 +202,9 @@ export default function NewEventPage() {
                         placeholder='egységár'
                         value={drink.price ?? ''}
                         onChange={(e) => {
-                          const updatedDrinks = form
-                            .getValues('drinkActions')
-                            .map((d) => (d.id === drink.id ? { ...d, price: Number(e.target.value) } : d));
+                          const updatedDrinks = (form.getValues('drinkActions') ?? []).map((d) =>
+                            d.id === drink.id ? { ...d, price: Number(e.target.value) } : d
+                          );
                           form.setValue('drinkActions', updatedDrinks);
                         }}
                       />
