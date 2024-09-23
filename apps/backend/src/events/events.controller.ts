@@ -42,7 +42,7 @@ export class EventsController {
     @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip?: number,
     @Query('take', new DefaultValuePipe(10), ParseIntPipe) take?: number
   ): Promise<Event[]> {
-    return this.eventsService.findAll(take, skip);
+    return this.eventsService.findAll(skip, take);
   }
 
   @Get(':id')

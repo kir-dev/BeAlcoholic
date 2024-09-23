@@ -27,7 +27,7 @@ export class AuthController {
   oauthRedirect(@CurrentUser() user: User) {
     const jwt = this.authService.login(user);
     return {
-      url: `${process.env.FRONTEND_URL}?jwt=${jwt}`,
+      url: `${process.env.FRONTEND_URL}/authorized?jwt=${jwt}`,
     };
   }
 }

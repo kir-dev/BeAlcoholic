@@ -6,8 +6,8 @@ export interface EventDetails {
   name: string;
   location: string;
   ownerId: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   description?: string;
   createdAt: Date;
   owner: PublicUser;

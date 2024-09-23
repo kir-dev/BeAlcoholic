@@ -7,8 +7,8 @@ export const events: EventDetails[] = [
     name: 'Pöci',
     location: 'Budapest, Irinyi József u. 42, 1117 (8. floor)',
     ownerId: 'string',
-    startDate: new Date('2022-01-01T22:30:00.000Z'),
-    endDate: new Date('2022-01-02T04:00:00.000Z'),
+    startDate: '2022-01-01T22:30:00.000Z',
+    endDate: '2022-01-02T04:00:00.000Z',
     description:
       'We are going to play a turn-based strategy game played with 20 forint coins, during which wearing a tie is mandatory.',
     createdAt: new Date('2024-08-08T12:13:40.444Z'),
