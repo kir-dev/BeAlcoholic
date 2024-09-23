@@ -13,3 +13,10 @@ export interface DrinkAction {
   user: PublicUser;
   drink: Drink;
 }
+
+export interface CreateDrinkAction {
+  drinkId: string;
+  eventId: string;
+  price: number;
+  milliliter: number;
+}
