@@ -30,7 +30,6 @@ const formSchema = z.object({
 });
 
 async function onSubmit(event: React.FormEvent, values: z.infer<typeof formSchema>) {
-  console.log('Á');
   event.preventDefault();
   try {
     const response = await axiosConfig.post('/events', values);
