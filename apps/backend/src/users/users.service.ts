@@ -53,13 +53,13 @@ export class UsersService {
 
     const drinkActions = await this.prisma.drinkAction.findMany({
       where: { hasEffect: true },
-      include: { drink: { select: { alcoholContent: true } } },
+      include: { drink: { select: { alcoholContent: true, milliliter: true } } },
     });
 
     let totalBac = 0;
 
     for (const drinkAction of drinkActions) {
-      const dose = drinkAction.milliliter * (drinkAction.drink.alcoholContent / 100) * 0.789;
+      const dose = drinkAction.drink.milliliter * (drinkAction.drink.alcoholContent / 100) * 0.789;
       const timeDifferenceMs = currentTime.getTime() - drinkAction.createdAt.getTime();
       const eliminated = (timeDifferenceMs / (1000 * 60 * 60)) * 0.016;
 

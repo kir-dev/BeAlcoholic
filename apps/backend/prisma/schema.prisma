@@ -41,16 +41,16 @@ model User {
 }
 
 model Drink {
-  id             String    @id @default(uuid())
+  id             String        @id @default(uuid())
   name           String
   type           DrinkType
   alcoholContent Float
   custom         Boolean
   description    String?
-
-  createdAt    DateTime      @default(now())
-  drinkActions DrinkAction[]
-  favouriteTo  User[]
+  milliliter     Int
+  createdAt      DateTime      @default(now())
+  drinkActions   DrinkAction[]
+  favouriteTo    User[]
 }
 
 model Event {
@@ -68,15 +68,14 @@ model Event {
 }
 
 model DrinkAction {
-  id         String   @id @default(uuid())
-  price      Int
-  milliliter Int
-  drinkId    String
-  drink      Drink    @relation(fields: [drinkId], references: [id])
-  eventId    String
-  event      Event    @relation(fields: [eventId], references: [id])
-  userId     String
-  user       User     @relation(fields: [userId], references: [authSchId])
-  hasEffect  Boolean  @default(true)
-  createdAt  DateTime @default(now())
+  id        String   @id @default(uuid())
+  price     Int
+  drinkId   String
+  drink     Drink    @relation(fields: [drinkId], references: [id])
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [authSchId])
+  hasEffect Boolean  @default(true)
+  createdAt DateTime @default(now())
 }
