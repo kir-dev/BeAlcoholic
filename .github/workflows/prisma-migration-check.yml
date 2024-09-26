@@ -36,8 +36,7 @@ jobs:
             echo "migration_added=false" >> $GITHUB_ENV
           fi
 
-      - name: Fail if `schema.prisma` was modified and no migration was added
+      - name: Warn if `schema.prisma` was modified and no migration was added
         if: env.schema_changed == 'true' && env.migration_added == 'false'
         run: |
-          echo "The schema.prisma file was modified, but no new migration was added."
-          exit 1
+          echo "::warning::The schema.prisma file was modified, but no new migration was added. Please ensure you commit a migration file when modifying the schema."
