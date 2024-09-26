@@ -1,5 +1,15 @@
 import { DrinkType } from '@prisma/client';
-import { IsBoolean, IsDateString, IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID, Min } from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Min,
+} from 'class-validator';
 import { IsFloat } from 'src/util/is-float.validator';
 
 export class Drink {
@@ -23,6 +33,14 @@ export class Drink {
    */
   @IsEnum(DrinkType)
   type: DrinkType;
+
+  /**
+   * Quantity of the drink in milliliter
+   * @example 500
+   */
+  @IsNumber()
+  @Min(0)
+  milliliter: number;
 
   /**
    * Alcohol content of the drink

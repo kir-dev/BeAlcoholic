@@ -30,14 +30,6 @@ export class DrinkAction {
   price: number;
 
   /**
-   * Quantity of the drink in milliliter
-   * @example 500
-   */
-  @IsNumber()
-  @Min(0)
-  milliliter: number;
-
-  /**
    * Shows if the alcohol still has effect on the user.
    * @example false
    */

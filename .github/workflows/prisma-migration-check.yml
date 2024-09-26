@@ -1,0 +1,43 @@
+name: Check Prisma Migrations
+
+on:
+  pull_request:
+    paths:
+      - 'apps/backend/prisma/schema.prisma'
+      - 'apps/backend/prisma/migrations/**'
+
+jobs:
+  check_prisma_changes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for all branches
+
+      - name: Fetch base branch
+        run: git fetch origin ${{ github.base_ref }}
+
+      - name: Check if `schema.prisma` was modified in the PR
+        id: check_schema
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}... | grep -q 'apps/backend/prisma/schema.prisma'; then
+            echo "schema_changed=true" >> $GITHUB_ENV
+          else
+            echo "schema_changed=false" >> $GITHUB_ENV
+          fi
+
+      - name: Check if a new migration was added in the PR
+        id: check_migrations
+        run: |
+          if git diff --name-only --diff-filter=A origin/${{ github.base_ref }}... | grep -q 'apps/backend/prisma/migrations/'; then
+            echo "migration_added=true" >> $GITHUB_ENV
+          else
+            echo "migration_added=false" >> $GITHUB_ENV
+          fi
+
+      - name: Fail if `schema.prisma` was modified and no migration was added
+        if: env.schema_changed == 'true' && env.migration_added == 'false'
+        run: |
+          echo "The schema.prisma file was modified, but no new migration was added."
+          exit 1
